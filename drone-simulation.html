@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>GreenLift AI - Drone Flight Simulation</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, sans-serif;
+            background: linear-gradient(135deg, #e0f7fa, #f5f5f5);
+            margin: 0;
+            padding: 20px;
+            color: #2c3e50;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        header {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        .controls {
+            padding: 20px;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: center;
+            background: #f8f9fa;
+            border-bottom: 1px solid #eee;
+        }
+        .control-group {
+            display: flex;
+            flex-direction: column;
+        }
+        label {
+            font-size: 14px;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        select, button {
+            padding: 10px 15px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            font-size: 16px;
+        }
+        button {
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        button:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(46, 204, 113, 0.4);
+        }
+        button:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+        }
+        .simulation-area {
+            position: relative;
+            height: 500px;
+            background: #f0f8ff;
+            overflow: hidden;
+        }
+        svg {
+            width: 100%;
+            height: 100%;
+        }
+        .status-bar {
+            display: flex;
+            justify-content: space-around;
+            padding: 15px;
+            background: #2c3e50;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #e74c3c;
+        }
+        .dot.online {
+            background: #2ecc71;
+        }
+        .info-panel {
+            padding: 15px;
+            background: #fff8e1;
+            font-size: 14px;
+            border-top: 1px solid #ffd54f;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🚁 GreenLift AI – Drone Flight Simulation</h1>
+            <p>Solar-Powered VTOL Drone Delivery for SMEs</p>
+        </header>
+
+        <div class="controls">
+            <div class="control-group">
+                <label for="packageWeight">Package Weight</label>
+                <select id="packageWeight">
+                    <option value="0.5">Documents (0.5 kg)</option>
+                    <option value="1">Medicine (1 kg)</option>
+                    <option value="3">Electronics (3 kg)</option>
+                    <option value="5">Groceries (5 kg)</option>
+                    <option value="7">Overload Test (7 kg)</option>
+                </select>
+            </div>
+            <button id="startBtn">▶️ Start Simulation</button>
+            <button id="resetBtn" disabled>🔄 Reset</button>
+        </div>
+
+        <div class="simulation-area">
+            <svg viewBox="0 0 800 500" xmlns="http://www.w3.org/2000/svg">
+                <!-- Map Background -->
+                <rect x="0" y="0" width="800" height="500" fill="#e8f4fc" />
+                
+                <!-- Ground -->
+                <rect x="0" y="450" width="800" height="50" fill="#27ae60" />
+                
+                <!-- Drone Hub (Origin) -->
+                <rect x="100" y="400" width="60" height="50" fill="#9b59b6" rx="5" />
+                <text x="130" y="390" font-size="12" text-anchor="middle" fill="#2c3e50">Drone Hub</text>
+                
+                <!-- User Location (Destination) -->
+                <circle cx="650" cy="430" r="15" fill="#e74c3c" />
+                <text x="650" y="410" font-size="12" text-anchor="middle" fill="#2c3e50">User</text>
+                
+                <!-- Flight Path (Dashed Line) -->
+                <path d="M130,400 L130,200 L650,200 L650,430" 
+                      stroke="#3498db" stroke-dasharray="5,5" fill="none" stroke-width="2" id="flightPath" opacity="0.6"/>
+                
+                <!-- Drone (initial position) -->
+                <g id="drone">
+                    <!-- Body -->
+                    <rect x="115" y="385" width="30" height="15" rx="5" fill="#3498db" />
+                    <!-- Solar Panels (wings) -->
+                    <rect x="90" y="390" width="80" height="5" fill="#f1c40f" opacity="0.9" />
+                    <!-- Rotors (VTOL) -->
+                    <circle cx="105" cy="385" r="6" fill="#2c3e50" />
+                    <circle cx="145" cy="385" r="6" fill="#2c3e50" />
+                </g>
+                
+                <!-- String (initially hidden) -->
+                <line id="string" x1="130" y1="400" x2="130" y2="400" 
+                      stroke="#7f8c8d" stroke-width="2" opacity="0"/>
+                
+                <!-- Package (initially hidden) -->
+                <rect id="package" x="125" y="400" width="10" height="10" fill="#8e44ad" opacity="0"/>
+            </svg>
+        </div>
+
+        <div class="status-bar">
+            <div class="status-item">
+                <span class="dot online" id="connectionDot"></span>
+                <span>Server Connection: <strong>ONLINE</strong></span>
+            </div>
+            <div class="status-item">
+                <span>☀️ Solar Power:</span>
+                <span id="solarLevel">85%</span>
+            </div>
+            <div class="status-item">
+                <span>🔋 Backup Battery:</span>
+                <span id="batteryLevel">100%</span>
+            </div>
+            <div class="status-item">
+                <span>Status:</span>
+                <span id="flightStatus">Ready</span>
+            </div>
+        </div>
+
+        <div class="info-panel" id="infoPanel">
+            Simulation ready. Select package weight and click "Start Simulation".
+        </div>
+    </div>
+
+    <script>
+        // DOM Elements
+        const startBtn = document.getElementById('startBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const packageWeightSelect = document.getElementById('packageWeight');
+        const infoPanel = document.getElementById('infoPanel');
+        const flightStatus = document.getElementById('flightStatus');
+        const solarLevel = document.getElementById('solarLevel');
+        const batteryLevel = document.getElementById('batteryLevel');
+
+        // Animation control
+        let animationRunning = false;
+
+        // Reset drone to start position
+        function resetDrone() {
+            const drone = document.getElementById('drone');
+            const string = document.getElementById('string');
+            const pkg = document.getElementById('package');
+            
+            drone.setAttribute('transform', 'translate(0,0)');
+            string.setAttribute('opacity', '0');
+            pkg.setAttribute('opacity', '0');
+            flightStatus.textContent = 'Ready';
+            infoPanel.textContent = 'Simulation reset. Ready to start.';
+            startBtn.disabled = false;
+            resetBtn.disabled = true;
+            animationRunning = false;
+        }
+
+        // Main simulation logic
+        function startSimulation() {
+            if (animationRunning) return;
+            animationRunning = true;
+            startBtn.disabled = true;
+            resetBtn.disabled = true;
+            
+            const weight = parseFloat(packageWeightSelect.value);
+            const maxLoad = 5.0; // kg
+            const isOverloaded = weight > maxLoad;
+
+            infoPanel.textContent = isOverloaded 
+                ? `⚠️ Package weight (${weight} kg) exceeds limit (${maxLoad} kg). Safety protocol will activate.`
+                : `📦 Delivering ${weight} kg package. Drone en route.`;
+
+            // Initial state
+            flightStatus.textContent = "Taking off vertically...";
+            solarLevel.textContent = "85%";
+            batteryLevel.textContent = "100%";
+
+            const drone = document.getElementById('drone');
+            const string = document.getElementById('string');
+            const pkg = document.getElementById('package');
+
+            // Step 1: Vertical Takeoff (to 200px y)
+            let y = 385;
+            const takeoffInterval = setInterval(() => {
+                if (y > 200) {
+                    clearInterval(takeoffInterval);
+                    
+                    flightStatus.textContent = "Transitioning to horizontal flight...";
+                    
+                    // Step 2: Horizontal flight to x=650
+                    let x = 115;
+                    const flyInterval = setInterval(() => {
+                        if (x < 620) {
+                            x += 5;
+                            drone.setAttribute('transform', `translate(${x - 115}, ${385 - y})`);
+                        } else {
+                            clearInterval(flyInterval);
+                            flightStatus.textContent = "Arrived at destination. Lowering package...";
+                            
+                            // Step 3: Lower string
+                            let stringY = 200;
+                            string.setAttribute('opacity', '1');
+                            string.setAttribute('x1', '650');
+                            string.setAttribute('x2', '650');
+                            pkg.setAttribute('opacity', '1');
+                            pkg.setAttribute('x', '645');
+                            
+                            const lowerInterval = setInterval(() => {
+                                if (stringY < 420) {
+                                    stringY += 4;
+                                    string.setAttribute('y2', stringY);
+                                    pkg.setAttribute('y', stringY);
+                                } else {
+                                    clearInterval(lowerInterval);
+                                    
+                                    if (isOverloaded) {
+                                        flightStatus.textContent = "⚠️ Tension overload! Releasing string...";
+                                        infoPanel.innerHTML = `❌ Load (${weight} kg) > ${maxLoad} kg. String released for safety.<br>Drone returning to hub.`;
+                                        
+                                        // Simulate string release
+                                        setTimeout(() => {
+                                            string.setAttribute('opacity', '0');
+                                            pkg.setAttribute('opacity', '0');
+                                            flightStatus.textContent = "Returning to hub...";
+                                            
+                                            // Return animation (simplified)
+                                            setTimeout(() => {
+                                                resetDrone();
+                                                infoPanel.textContent = "✅ Simulation complete. Drone safe.";
+                                            }, 2000);
+                                        }, 1500);
+                                    } else {
+                                        flightStatus.textContent = "✅ Package delivered successfully!";
+                                        infoPanel.textContent = `🎉 ${weight} kg package delivered. Drone returning to hub.`;
+                                        
+                                        setTimeout(() => {
+                                            resetDrone();
+                                            infoPanel.textContent = "✅ Simulation complete. Drone recharged and ready.";
+                                        }, 2000);
+                                    }
+                                }
+                            }, 80);
+                        }
+                    }, 50);
+                } else {
+                    y -= 2;
+                    drone.setAttribute('transform', `translate(0, ${385 - y})`);
+                }
+            }, 30);
+        }
+
+        // Event Listeners
+        startBtn.addEventListener('click', startSimulation);
+        resetBtn.addEventListener('click', resetDrone);
+
+        // Initialize
+        resetDrone();
+    </script>
+</body>
+</html>
