@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>GreenLift AI – Ultra-Realistic Drone Delivery</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{font-family:'Segoe UI',sans-serif;background:#f5f5f5;}
+    #map-container{position:relative;width:100vw;height:100vh;overflow:hidden;}
+    #map{width:100%;height:100%;border:none;}
+    #overlay{position:absolute;inset:0;pointer-events:none;z-index:10000;}
+    #top-bar{
+        position:absolute;top:0;left:0;right:0;
+        background:rgba(255,255,255,0.95);
+        padding:12px 20px;
+        display:flex;gap:12px;justify-content:center;
+        box-shadow:0 4px 12px rgba(0,0,0,.15);
+        z-index:20000;
+    }
+    #top-bar button{
+        background:#3b82f6;color:#fff;border:none;padding:8px 16px;
+        border-radius:20px;font-weight:bold;cursor:pointer;
+    }
+    #top-bar button:hover{background:#2563eb;}
+    #top-bar button:disabled{background:#95a5a6;cursor:default;}
+
+    #sidebar{
+        position:absolute;right:0;top:70px;bottom:0;width:280px;
+        background:rgba(255,255,255,0.97);padding:20px;
+        border-left:1px solid #ddd;overflow-y:auto;
+        box-shadow:-4px 0 12px rgba(0,0,0,.1);
+        z-index:15000;
+    }
+    #sidebar h3{margin-bottom:12px;color:#2c3e50;}
+    #sidebar p{margin:6px 0;font-size:14px;}
+    #sidebar .value{font-weight:bold;color:#27ae60;}
+
+    #status{
+        position:absolute;bottom:20px;left:20px;
+        background:rgba(0,0,0,0.7);color:#fff;
+        padding:10px 15px;border-radius:8px;font-size:14px;
+        z-index:15000;
+    }
+    .drone{
+        position:absolute;font-size:0;pointer-events:none;
+        z-index:20000;transform:translate(-50%,-50%);
+    }
+    .drone img{width:48px;height:48px;filter:drop-shadow(0 0 8px #0f0);}
+</style>
+</head>
+<body>
+
+<div id="map-container">
+    <!-- PUST campus – exact bbox -->
+    <iframe id="map"
+        src="https://www.openstreetmap.org/export/embed.html?bbox=89.275,24.010,89.285,24.017&layer=mapnik"
+        frameborder="0"></iframe>
+
+    <div id="top-bar">
+        <button id="backBtn">Back</button>
+        <button id="restartBtn">Restart</button>
+        <button id="mechanismBtn">Show Mechanism</button>
+    </div>
+
+    <div id="overlay"></div>
+
+    <div id="sidebar">
+        <h3>Order Details</h3>
+        <p><strong>Order ID:</strong> <span class="value" id="orderId">-</span></p>
+        <p><strong>Product:</strong> <span class="value" id="product">-</span></p>
+        <p><strong>Weight:</strong> <span class="value" id="weight">-</span> kg</p>
+        <p><strong>Destination:</strong> <span class="value" id="address">PUST Campus</span></p>
+        <p><strong>Status:</strong> <span class="value" id="flightStatus">Ready</span></p>
+    </div>
+
+    <div id="status">Drone ready at PUST Campus</div>
+</div>
+
+<script>
+/* --------------------------------------------------------------
+   1.  Read query-string (weight) – map back to product text
+   -------------------------------------------------------------- */
+const urlParams = new URLSearchParams(location.search);
+const weight = urlParams.get('weight') || '5';
+const weightMap = { '1':'Medicine (1 kg)', '3':'Electronics (3 kg)', '5':'Groceries (5 kg)' };
+const product = weightMap[weight] || 'Groceries (5 kg)';
+
+/* fill sidebar */
+document.getElementById('orderId').textContent = `GL-${Math.floor(Math.random()*1000).toString().padStart(3,'0')}`;
+document.getElementById('product').textContent = product.split(' (')[0];
+document.getElementById('weight').textContent = weight;
+document.getElementById('flightStatus').textContent = 'Preparing…';
+
+/* --------------------------------------------------------------
+   2.  Overlay + markers + orange route
+   -------------------------------------------------------------- */
+const overlay = document.getElementById('overlay');
+overlay.innerHTML = '';
+
+// START marker (left-center)
+const start = document.createElement('div');
+start.innerHTML = 'Takeoff';
+start.style.position = 'absolute';
+start.style.left = '25%'; start.style.top = '50%';
+start.style.fontSize = '28px';
+start.style.transform = 'translate(-50%,-50%)';
+start.style.color = '#ff0';
+overlay.appendChild(start);
+
+// DROP marker (right-center)
+const drop = document.createElement('div');
+drop.innerHTML = 'Drop';
+drop.style.position = 'absolute';
+drop.style.left = '65%'; drop.style.top = '45%';
+drop.style.fontSize = '26px';
+drop.style.transform = 'translate(-50%,-50%)';
+drop.style.color = '#f00';
+overlay.appendChild(drop);
+
+// ORANGE route line
+const line = document.createElement('div');
+line.style.position = 'absolute';
+line.style.left = '25%'; line.style.top = '50%';
+line.style.width = 'calc(40% - 4px)'; line.style.height = '4px';
+line.style.background = 'linear-gradient(90deg,#ff8c00,#ff4500)';
+line.style.transform = 'translateY(-50%) rotate(-8deg)';
+line.style.transformOrigin = 'left center';
+line.style.borderRadius = '2px';
+line.style.boxShadow = '0 0 10px rgba(255,140,0,.8)';
+overlay.appendChild(line);
+
+/* --------------------------------------------------------------
+   3.  Drone (custom SVG)
+   -------------------------------------------------------------- */
+let drone = null;
+function createDrone() {
+    drone = document.createElement('div');
+    drone.className = 'drone';
+    drone.innerHTML = `<img src="greenlift-drone-3d.svg" alt="GreenLift Drone">`;
+    overlay.appendChild(drone);
+}
+
+/* --------------------------------------------------------------
+   4.  Full delivery animation (take-off → fly → drop → return → land)
+   -------------------------------------------------------------- */
+let phase = 0, prog = 0, animId = null;
+const statusEl = document.getElementById('status');
+const flightStatusEl = document.getElementById('flightStatus');
+
+function animate() {
+    prog += 0.008;
+
+    if (phase === 0) {                // TAKE-OFF (0-20%)
+        if (prog > 0.2) { phase = 1; prog = 0; statusEl.textContent = 'Flying to destination…'; flightStatusEl.textContent = 'En-route'; }
+        const x = 25, y = 50 - 20*(prog*5);
+        drone.style.left = x+'%'; drone.style.top = y+'%';
+        drone.style.transform = 'translate(-50%,-50%) rotate(0deg)';
+
+    } else if (phase === 1) {         // FLY TO DROP (20-60%)
+        if (prog > 0.8) { phase = 2; prog = 0; statusEl.textContent = 'Dropping package…'; flightStatusEl.textContent = 'Delivering'; }
+        const x = 25 + 40*prog;
+        const y = 30 + 15*(prog*0.5);
+        drone.style.left = x+'%'; drone.style.top = y+'%';
+        drone.style.transform = 'translate(-50%,-50%) rotate(-15deg)';
+
+    } else if (phase === 2) {         // DROP HOVER (60-70%)
+        if (prog > 0.5) { phase = 3; prog = 0; statusEl.textContent = 'Returning to base…'; flightStatusEl.textContent = 'Returning'; }
+        const x = 65, y = 45 - 10*prog;
+        drone.style.left = x+'%'; drone.style.top = y+'%';
+        drone.style.transform = `translate(-50%,-50%) rotate(0deg) scale(${1+prog*0.2})`;
+
+    } else if (phase === 3) {         // RETURN (70-95%)
+        if (prog > 0.8) { phase = 4; prog = 0; statusEl.textContent = 'Landing…'; flightStatusEl.textContent = 'Landing'; }
+        const x = 65 - 40*prog;
+        const y = 35 + 15*prog;
+        drone.style.left = x+'%'; drone.style.top = y+'%';
+        drone.style.transform = 'translate(-50%,-50%) rotate(15deg)';
+
+    } else if (phase === 4) {         // LAND (95-100%)
+        const x = 25, y = 50 - 20*(1-prog);
+        drone.style.left = x+'%'; drone.style.top = y+'%';
+        drone.style.transform = 'translate(-50%,-50%) rotate(0deg)';
+        if (prog > 1) {
+            statusEl.textContent = 'Delivery Complete!';
+            flightStatusEl.textContent = 'Complete';
+            document.getElementById('restartBtn').disabled = false;
+            return;
+        }
+    }
+
+    animId = requestAnimationFrame(animate);
+}
+
+/* --------------------------------------------------------------
+   5.  Buttons
+   -------------------------------------------------------------- */
+const qs = `?weight=${weight}`;   // keep same weight everywhere
+
+document.getElementById('backBtn').onclick = () => location.href = 'index.html';
+document.getElementById('restartBtn').onclick = () => {
+    if (animId) cancelAnimationFrame(animId);
+    drone.remove(); createDrone();
+    phase = prog = 0;
+    statusEl.textContent = 'Taking off…';
+    flightStatusEl.textContent = 'Take-off';
+    document.getElementById('restartBtn').disabled = true;
+    animate();
+};
+document.getElementById('mechanismBtn').onclick = () => location.href = `navigation_mechanism.htm`;
+
+/* --------------------------------------------------------------
+   6.  AUTO-START when page loads
+   -------------------------------------------------------------- */
+window.onload = () => {
+    createDrone();
+    document.getElementById('restartBtn').disabled = true;
+    setTimeout(() => {
+        statusEl.textContent = 'Taking off…';
+        flightStatusEl.textContent = 'Take-off';
+        animate();
+    }, 800);
+};
+</script>
+</body>
+</html>

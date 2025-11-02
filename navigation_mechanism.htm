@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>GreenLift AI - VTOL Drone Simulation</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, sans-serif;
+            background: linear-gradient(135deg, #e0f7fa, #f5f5f5);
+            margin: 0;
+            padding: 20px;
+            color: #2c3e50;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1000px;
+            width: 100%;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        header {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        .controls {
+            padding: 20px;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: center;
+            background: #f8f9fa;
+            border-bottom: 1px solid #eee;
+        }
+        .control-group {
+            display: none;
+            flex-direction: column;
+        
+        }
+        label {
+            font-size: 14px;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        select, button {
+            padding: 10px 15px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            font-size: 16px;
+        }
+        button {
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        button:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(46, 204, 113, 0.4);
+        }
+        button:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+        }
+        .simulation-area {
+            position: relative;
+            height: 500px;
+            background: #f0f8ff;
+            overflow: hidden;
+        }
+        svg {
+            width: 100%;
+            height: 100%;
+        }
+        .status-bar {
+            display: flex;
+            justify-content: space-around;
+            padding: 15px;
+            background: #2c3e50;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #e74c3c;
+        }
+        .dot.online {
+            background: #2ecc71;
+        }
+        .info-panel {
+            padding: 15px;
+            background: #fff8e1;
+            font-size: 14px;
+            border-top: 1px solid #ffd54f;
+            min-height: 40px;
+        }
+        
+        /* --- Animation Styles --- */
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .fan.spinning {
+            animation: spin 0.4s linear infinite;
+            transform-origin: center;
+            transform-box: fill-box;
+        }
+        
+        #horizontalFan.spinning {
+            animation: spin 0.1s linear infinite;
+            transform-origin: center;
+            transform-box: fill-box;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🚁 GreenLift AI – VTOL Drone Simulation</h1>
+            <p>Solar-Powered VTOL Drone Delivery for SMEs</p>
+        </header>
+
+        <div class="controls">
+            <div class="control-group" >
+                <label for="packageWeight">Package Weight</label>
+                <select id="packageWeight">
+                    <option value="0.5">Documents (0.5 kg)</option>
+                    <option value="1">Medicine (1 kg)</option>
+                    <option value="3">Electronics (3 kg)</option>
+                    <option value="5">Groceries (5 kg)</option>
+                    <option value="7">Overload Test (7 kg)</option>
+                </select>
+            </div>
+            <button onclick="window.location.href='index.html';">Go to Homepage</button>
+            <button onclick="window.location.href='ultrarealistic_simulation.htm';">Go to Map Simulation</button>
+            <button id="startBtn">▶️ Start Simulation</button>
+            <button id="resetBtn" disabled>🔄 Reset</button>
+        </div>
+
+        <div class="simulation-area">
+            <svg viewBox="0 0 800 500" xmlns="http://www.w3.org/2000/svg">
+                <rect x="0" y="0" width="800" height="500" fill="#e8f4fc" />
+                
+                <rect x="0" y="450" width="800" height="50" fill="#27ae60" />
+                
+                <rect x="100" y="400" width="60" height="50" fill="#9b59b6" rx="5" />
+                <text x="130" y="390" font-size="12" text-anchor="middle" fill="#2c3e50">Drone Hub</text>
+                
+                <circle cx="650" cy="430" r="15" fill="#e74c3c" />
+                <text x="650" y="410" font-size="12" text-anchor="middle" fill="#2c3e50">User</text>
+                
+                <path d="M130,400 L130,210 L650,210 L650,430" 
+                      stroke="#3498db" stroke-dasharray="5,5" fill="none" stroke-width="2" id="flightPath" opacity="0.6"/>
+                
+                <g id="droneAssembly" transform="translate(0,0)">
+                    <rect x="115" y="385" width="30" height="15" rx="5" fill="#3498db" />
+                    <rect x="90" y="390" width="80" height="5" fill="#5D6D7E" />
+                    
+                    <g id="verticalFans">
+                        <g class="fan" id="fan1">
+                            <rect x="90" y="387.5" width="10" height="10" fill="#2c3e50" rx="2"/>
+                            <line x1="91" y1="392.5" x2="99" y2="392.5" stroke="#7f8c8d" stroke-width="1.5" class="blade"/>
+                            <line x1="95" y1="388.5" x2="95" y2="396.5" stroke="#7f8c8d" stroke-width="1.5" class="blade"/>
+                        </g>
+                        <g class="fan" id="fan2">
+                            <rect x="160" y="387.5" width="10" height="10" fill="#2c3e50" rx="2"/>
+                            <line x1="161" y1="392.5" x2="169" y2="392.5" stroke="#7f8c8d" stroke-width="1.5" class="blade"/>
+                            <line x1="165" y1="388.5" x2="165" y2="396.5" stroke="#7f8c8d" stroke-width="1.5" class="blade"/>
+                        </g>
+                        <g class="fan" id="fan3">
+                            <rect x="110" y="387.5" width="10" height="10" fill="#2c3e50" rx="2"/>
+                            <line x1="111" y1="392.5" x2="119" y2="392.5" stroke="#7f8c8d" stroke-width="1.5" class="blade"/>
+                            <line x1="115" y1="388.5" x2="115" y2="396.5" stroke="#7f8c8d" stroke-width="1.5" class="blade"/>
+                        </g>
+                        <g class="fan" id="fan4">
+                            <rect x="140" y="387.5" width="10" height="10" fill="#2c3e50" rx="2"/>
+                            <line x1="141" y1="392.5" x2="149" y2="392.5" stroke="#7f8c8d" stroke-width="1.5" class="blade"/>
+                            <line x1="145" y1="388.5" x2="145" y2="396.5" stroke="#7f8c8d" stroke-width="1.5" class="blade"/>
+                        </g>
+                    </g>
+                    
+                    <g id="horizontalFan" opacity="0.8">
+                        <rect x="145" y="389" width="8" height="8" fill="#2c3e50" rx="1"/>
+                        <line x1="149" y1="386" x2="149" y2="396" stroke="#7f8c8d" stroke-width="2" class="blade" id="propBlade"/>
+                    </g>
+                    
+                    <line id="string" x1="130" y1="400" x2="130" y2="400" 
+                          stroke="#7f8c8d" stroke-width="2" opacity="0"/>
+                    
+                    <rect id="package" x="125" y="400" width="10" height="10" fill="#8e44ad" opacity="0"/>
+                </g>
+            </svg>
+        </div>
+
+        <div class="status-bar">
+            <div class="status-item">
+                <span class="dot online" id="connectionDot"></span>
+                <span>Server Connection: <strong>ONLINE</strong></span>
+            </div>
+            <div class="status-item">
+                <span>☀️ Solar Power:</span>
+                <span id="solarLevel">85%</span>
+            </div>
+            <div class="status-item">
+                <span>🔋 Backup Battery:</span>
+                <span id="batteryLevel">100%</span>
+            </div>
+            <div class="status-item">
+                <span>Status:</span>
+                <span id="flightStatus">Ready</span>
+            </div>
+        </div>
+
+        <div class="info-panel" id="infoPanel">
+            Simulation ready. Select package weight and click "Start Simulation".
+        </div>
+    </div>
+
+    <script>
+        // DOM Elements
+        const startBtn = document.getElementById('startBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const packageWeightSelect = document.getElementById('packageWeight');
+        const infoPanel = document.getElementById('infoPanel');
+        const flightStatus = document.getElementById('flightStatus');
+        const solarLevel = document.getElementById('solarLevel');
+        const batteryLevel = document.getElementById('batteryLevel');
+        
+        // SVG Elements
+        const droneAssembly = document.getElementById('droneAssembly');
+        const string = document.getElementById('string');
+        const pkg = document.getElementById('package');
+        
+        const verticalFanElements = document.querySelectorAll('#verticalFans .fan');
+        const horizontalFan = document.getElementById('horizontalFan');
+
+        // Animation control
+        let animationFrameId = null;
+        let isSimulating = false;
+
+        // --- Animation Constants ---
+        const V_SPEED = 0.8; // pixels per frame
+        const H_SPEED = 2.0;
+        const DROP_SPEED = 1.5;
+
+        // Drone start/end positions
+        const START_Y = 385; // Drone body top
+        const START_X = 130; // Drone body center
+        const CRUISE_ALT_Y = 200; // Absolute Y for cruising
+        const DEST_X = 650; // Absolute X for destination
+        const DROP_Y = 420; // Absolute Y for package drop-off
+        
+        // Calculated translations
+        const V_TRANSLATE = CRUISE_ALT_Y - START_Y; // e.g., 200 - 385 = -185
+        const H_TRANSLATE = DEST_X - START_X;     // e.g., 650 - 130 = 520
+        
+        // String/Package relative coordinates
+        const STRING_ATTACH_Y = 400; // Relative Y of string/pkg
+        const STRING_DROP_LENGTH = DROP_Y - CRUISE_ALT_Y - (STRING_ATTACH_Y - START_Y); // 420 - 200 - (400 - 385) = 205
+
+
+        /**
+         * Generic animation helper function.
+         */
+        function animate(duration, update) {
+            return new Promise((resolve) => {
+                const startTime = performance.now();
+
+                function step(currentTime) {
+                    if (isSimulating === false) { // Allow reset to cancel
+                        resolve(false); // Resolve with 'false' to indicate cancellation
+                        return;
+                    }
+
+                    let elapsed = currentTime - startTime;
+                    let progress = Math.min(elapsed / duration, 1);
+                    
+                    update(progress); // Call the update function with progress (0 to 1)
+
+                    if (progress < 1) {
+                        animationFrameId = requestAnimationFrame(step);
+                    } else {
+                        resolve(true); // Resolve with 'true' for success
+                    }
+                }
+                animationFrameId = requestAnimationFrame(step);
+            });
+        }
+
+        /**
+         * Toggles the spinning animation on fan groups
+         */
+        function toggleFans(state) {
+            if (state === 'vertical' || state === 'hover') {
+                verticalFanElements.forEach(fan => fan.classList.add('spinning'));
+                horizontalFan.classList.remove('spinning');
+            } else if (state === 'horizontal') {
+                verticalFanElements.forEach(fan => fan.classList.remove('spinning'));
+                horizontalFan.classList.add('spinning');
+            } else { // 'off'
+                verticalFanElements.forEach(fan => fan.classList.remove('spinning'));
+                horizontalFan.classList.remove('spinning');
+            }
+        }
+
+        /**
+         * Main simulation logic, rewritten with async/await
+         */
+        async function startSimulation() {
+            if (isSimulating) return;
+            isSimulating = true;
+            startBtn.disabled = true;
+            
+            const weight = parseFloat(packageWeightSelect.value);
+            const maxLoad = 5.0; // kg
+            const isOverloaded = weight > maxLoad;
+
+            infoPanel.textContent = isOverloaded 
+                ? `⚠️ Package weight (${weight} kg) exceeds limit (${maxLoad} kg). Safety protocol will activate.`
+                : `📦 Delivering ${weight} kg package. Drone en route.`;
+
+            // Reset UI
+            flightStatus.textContent = "Initiating...";
+            solarLevel.textContent = "85%";
+            batteryLevel.textContent = "100%";
+            let simCancelled = false;
+            
+            try {
+                // --- 1. Takeoff ---
+                flightStatus.textContent = "Taking off vertically...";
+                toggleFans('vertical'); 
+                let takeoffDuration = Math.abs(V_TRANSLATE) / V_SPEED * (1000 / 60);
+                let success = await animate(takeoffDuration, (p) => {
+                    droneAssembly.setAttribute('transform', `translate(0, ${p * V_TRANSLATE})`);
+                });
+                if (!success) throw new Error('Simulation Reset');
+
+                // --- 2. Fly to Destination ---
+                flightStatus.textContent = "Flying to destination...";
+                toggleFans('horizontal'); 
+                let flyDuration = Math.abs(H_TRANSLATE) / H_SPEED * (1000 / 60);
+                success = await animate(flyDuration, (p) => {
+                    droneAssembly.setAttribute('transform', `translate(${p * H_TRANSLATE}, ${V_TRANSLATE})`);
+                });
+                if (!success) throw new Error('Simulation Reset');
+
+                // --- 3. Arrive & Lower Package ---
+                flightStatus.textContent = "Arrived. Lowering package...";
+                toggleFans('hover');
+                string.setAttribute('opacity', '1');
+                pkg.setAttribute('opacity', '1');
+                
+                let dropDuration = Math.abs(STRING_DROP_LENGTH) / DROP_SPEED * (1000 / 60);
+                success = await animate(dropDuration, (p) => {
+                    const currentStringY = STRING_ATTACH_Y + (p * STRING_DROP_LENGTH);
+                    string.setAttribute('y2', currentStringY);
+                    pkg.setAttribute('y', currentStringY);
+                });
+                if (!success) throw new Error('Simulation Reset');
+                
+                // --- 4. Handle Package Drop/Overload ---
+                if (isOverloaded) {
+                    flightStatus.textContent = "⚠️ Overload! Releasing string!";
+                    infoPanel.innerHTML = `❌ Load (${weight} kg) > ${maxLoad} kg. String released for safety.<br>Drone returning to hub.`;
+                    string.setAttribute('opacity', '0.3');
+                    pkg.setAttribute('opacity', '0.3');
+                } else {
+                    flightStatus.textContent = "✅ Package delivered!";
+                    infoPanel.textContent = `🎉 ${weight} kg package delivered. Retracting string.`;
+                    pkg.setAttribute('opacity', '0');
+                    
+                    // --- 5. Retract String ---
+                    success = await animate(dropDuration / 2, (p) => { // Retract faster
+                        const currentStringY = STRING_ATTACH_Y + ((1 - p) * STRING_DROP_LENGTH);
+                        string.setAttribute('y2', currentStringY);
+                    });
+                    if (!success) throw new Error('Simulation Reset');
+                    string.setAttribute('opacity', '0');
+                }
+                
+                // --- 6. Fly Home ---
+                flightStatus.textContent = "Returning to hub...";
+                toggleFans('horizontal'); 
+                
+                // --- MODIFIED ---
+                // We now apply a flip transform for the return journey.
+                // The drone's visual center is at x=130.
+                // The transform is: translate(tx + 2*130, ty) scale(-1, 1)
+                success = await animate(flyDuration, (p) => {
+                    const currentTx = (1 - p) * H_TRANSLATE;
+                    const currentTy = V_TRANSLATE;
+                    droneAssembly.setAttribute('transform', 
+                        `translate(${currentTx + 260}, ${currentTy}) scale(-1, 1)`
+                    );
+                });
+                // --- END MODIFIED ---
+                
+                if (!success) throw new Error('Simulation Reset');
+                
+                // --- 7. Land ---
+                flightStatus.textContent = "Landing...";
+                toggleFans('vertical'); 
+                
+                // --- MODIFIED ---
+                // We land while still flipped.
+                // The transform is: translate(2*130, ty) scale(-1, 1)
+                success = await animate(takeoffDuration, (p) => {
+                    const currentTy = (1 - p) * V_TRANSLATE;
+                    droneAssembly.setAttribute('transform', 
+                        `translate(260, ${currentTy}) scale(-1, 1)`
+                    );
+                });
+                // --- END MODIFIED ---
+                
+                if (!success) throw new Error('Simulation Reset');
+                
+                // --- 8. Simulation Complete ---
+                flightStatus.textContent = "Landed. Mission Complete.";
+                infoPanel.textContent = "✅ Simulation complete. Drone recharged and ready.";
+                toggleFans('off');
+                
+            } catch (error) {
+                if (error.message === 'Simulation Reset') {
+                    console.log('Simulation was reset by user.');
+                } else {
+                    console.error('Simulation error:', error);
+                    infoPanel.textContent = '❌ An unexpected error occurred.';
+                }
+            } finally {
+                // Final state
+                isSimulating = false;
+                startBtn.disabled = true; // Stays disabled until reset
+                resetBtn.disabled = false;
+                if (simCancelled) {
+                    resetDrone(); // Force a clean reset
+                }
+            }
+        }
+
+        /**
+         * Reset drone to start position
+         */
+        function resetDrone() {
+            // Stop any running animation
+            if (animationFrameId) {
+                cancelAnimationFrame(animationFrameId);
+                animationFrameId = null;
+            }
+            isSimulating = false;
+
+            // Reset drone visual state (removes flip transform)
+            droneAssembly.setAttribute('transform', 'translate(0,0)');
+            string.setAttribute('opacity', '0');
+            string.setAttribute('y2', STRING_ATTACH_Y);
+            pkg.setAttribute('opacity', '0');
+            pkg.setAttribute('y', STRING_ATTACH_Y);
+            toggleFans('off');
+            
+            // Reset UI
+            flightStatus.textContent = 'Ready';
+            infoPanel.textContent = 'Simulation reset. Ready to start.';
+            startBtn.disabled = false;
+            resetBtn.disabled = true;
+        }
+
+        // Event Listeners
+        startBtn.addEventListener('click', startSimulation);
+        resetBtn.addEventListener('click', resetDrone);
+
+        // Initialize
+        resetDrone();
+    </script>
+</body>
+</html>
