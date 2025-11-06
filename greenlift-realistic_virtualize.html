@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>GreenLift AI – Realistic VTOL Drone Simulation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { 
+            margin: 0; 
+            font-family: 'Inter', sans-serif; 
+            background: #f0f2f5; 
+            overflow: hidden; 
+        }
+        #container { 
+            width: 100vw; 
+            height: 100vh; 
+            position: relative; 
+        }
+        #controls {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255,255,255,0.9);
+            padding: 1rem 1.5rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            display: flex;
+            gap: 1rem;
+            z-index: 10;
+        }
+        select, button {
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            border: 1px solid #d1d5db;
+            background: white;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+        button {
+            background: #3b82f6;
+            color: white;
+            font-weight: 500;
+            border-color: #3b82f6;
+        }
+        button:hover:not(:disabled) {
+            background: #2563eb;
+        }
+        button:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+        }
+        #status {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            max-width: 300px;
+        }
+        .dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #2ecc71;
+            margin-right: 6px;
+        }
+        #map-container {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            width: 300px;
+            height: 200px;
+            border-radius: 0.5rem;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            z-index: 5;
+        }
+        #map-container iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tween.js/18.6.4/tween.umd.js"></script>
+</head>
+<body>
+    <div id="container"></div>
+
+    <div id="controls">
+        <label for="weight-select" class="font-medium text-gray-700">Package Weight:</label>
+        <select id="weight-select">
+            <option value="1">Medicine (1 kg)</option>
+            <option value="3">Electronics (3 kg)</option>
+            <option value="5">Groceries (5 kg)</option>
+            <option value="7">Overload Test (7 kg)</option>
+        </select>
+        <button id="start-btn">▶️ Start Flight</button>
+    </div>
+
+    <div id="status">
+        <p><strong>GreenLift AI Drone</strong></p>
+        <p><span class="dot"></span> Server: <strong>ONLINE</strong></p>
+        <p>☀️ Solar: <span id="solar-pct">85%</span></p>
+        <p>🔋 Battery: <span id="battery-pct">100%</span></p>
+        <p>Status: <span id="flight-status">Ready at PUST</span></p>
+    </div>
+
+    <div id="map-container">
+        <iframe src="https://www.openstreetmap.org/export/embed.html?bbox=89.15,23.95,89.35,24.10&layer=mapnik&marker=24.05,89.25" frameborder="0"></iframe>
+    </div>
+
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://cdn.jsdelivr.net/npm/three@0.164.1/build/three.module.js",
+                "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.164.1/examples/jsm/"
+            }
+        }
+    </script>
+
+    <script type="module">
+        import * as THREE from 'three';
+        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+        let scene, camera, renderer, controls;
+        let drone, string, packageBox;
+        let verticalFans = [], horizontalFan;
+        let isFlying = false;
+        let solarLevel = 85;
+        let batteryLevel = 100;
+
+        const startBtn = document.getElementById('start-btn');
+        const weightSelect = document.getElementById('weight-select');
+        const flightStatus = document.getElementById('flight-status');
+        const solarPct = document.getElementById('solar-pct');
+        const batteryPct = document.getElementById('battery-pct');
+
+        const PUST = new THREE.Vector3(-15, 0, 0);
+        const USER = new THREE.Vector3(15, 0, 0);
+
+        // === GET WEIGHT FROM URL (e.g., ?weight=5) ===
+        function getWeightFromUrl() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const weight = parseFloat(urlParams.get('weight'));
+            return isNaN(weight) ? null : weight;
+        }
+
+        function init() {
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x87CEEB);
+
+            camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.set(0, 10, 25);
+
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(window.devicePixelRatio);
+            renderer.shadowMap.enabled = true;
+            document.getElementById('container').appendChild(renderer.domElement);
+
+            const sun = new THREE.DirectionalLight(0xffffff, 1.2);
+            sun.position.set(10, 20, 10);
+            sun.castShadow = true;
+            scene.add(sun);
+            scene.add(new THREE.AmbientLight(0xffffff, 0.4));
+
+            const groundGeo = new THREE.PlaneGeometry(100, 100);
+            const groundMat = new THREE.MeshStandardMaterial({ color: 0x2E8B57 });
+            const ground = new THREE.Mesh(groundGeo, groundMat);
+            ground.rotation.x = -Math.PI / 2;
+            ground.receiveShadow = true;
+            scene.add(ground);
+
+            const pustMarker = new THREE.Mesh(
+                new THREE.BoxGeometry(2, 0.5, 2),
+                new THREE.MeshStandardMaterial({ color: 0x1E90FF })
+            );
+            pustMarker.position.copy(PUST);
+            pustMarker.position.y = 0.25;
+            scene.add(pustMarker);
+            addLabel("Pabna University", PUST.clone().add(new THREE.Vector3(0, 1, 0)));
+
+            const userMarker = new THREE.Mesh(
+                new THREE.CylinderGeometry(0.8, 0.8, 0.5, 16),
+                new THREE.MeshStandardMaterial({ color: 0xFF4500 })
+            );
+            userMarker.position.copy(USER);
+            userMarker.position.y = 0.25;
+            scene.add(userMarker);
+            addLabel("Delivery Point", USER.clone().add(new THREE.Vector3(0, 1, 0)));
+
+            createDrone();
+
+            controls = new OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.05;
+            controls.target.set(0, 5, 0);
+
+            startBtn.addEventListener('click', () => {
+                const weight = parseFloat(weightSelect.value);
+                startFlight(weight);
+            });
+
+            window.addEventListener('resize', () => {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            });
+
+            animate();
+
+            // Auto-start if weight is in URL
+            const urlWeight = getWeightFromUrl();
+            if (urlWeight !== null) {
+                weightSelect.value = urlWeight;
+                setTimeout(() => startFlight(urlWeight), 1000);
+            }
+        }
+
+        function addLabel(text, position) {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = 256;
+            canvas.height = 64;
+            ctx.fillStyle = 'rgba(0,0,0,0.7)';
+            ctx.fillRect(0, 0, 256, 64);
+            ctx.font = '20px Inter';
+            ctx.fillStyle = 'white';
+            ctx.textAlign = 'center';
+            ctx.fillText(text, 128, 36);
+            const texture = new THREE.CanvasTexture(canvas);
+            const label = new THREE.Sprite(new THREE.SpriteMaterial({ map: texture }));
+            label.position.copy(position);
+            label.scale.set(5, 1.25, 1);
+            scene.add(label);
+        }
+
+        function createDrone() {
+            drone = new THREE.Group();
+            const body = new THREE.Mesh(new THREE.BoxGeometry(1.2, 0.3, 1.8), new THREE.MeshStandardMaterial({ color: 0x1E90FF }));
+            body.castShadow = true;
+            drone.add(body);
+
+            const panelMat = new THREE.MeshStandardMaterial({ color: 0xF1C40F, emissive: 0x333300, emissiveIntensity: 0.2 });
+            const leftPanel = new THREE.Mesh(new THREE.BoxGeometry(3, 0.02, 1), panelMat);
+            leftPanel.position.set(-1.5, 0.16, 0);
+            drone.add(leftPanel);
+            const rightPanel = new THREE.Mesh(new THREE.BoxGeometry(3, 0.02, 1), panelMat);
+            rightPanel.position.set(1.5, 0.16, 0);
+            drone.add(rightPanel);
+
+            const fanMat = new THREE.MeshStandardMaterial({ color: 0x2C3E50 });
+            const fanPositions = [[-0.8,0.3,-0.7],[0.8,0.3,-0.7],[-0.8,0.3,0.7],[0.8,0.3,0.7]];
+            fanPositions.forEach(pos => {
+                const fan = new THREE.Mesh(new THREE.CylinderGeometry(0.05,0.05,0.1,16), fanMat);
+                fan.position.set(...pos);
+                drone.add(fan);
+                verticalFans.push(fan);
+            });
+
+            horizontalFan = new THREE.Mesh(new THREE.CylinderGeometry(0.1,0.1,0.05,16), new THREE.MeshStandardMaterial({ color: 0x000000 }));
+            horizontalFan.rotation.z = Math.PI / 2;
+            horizontalFan.position.set(0, 0.3, -1.2);
+            drone.add(horizontalFan);
+
+            string = new THREE.Line(new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(0,0,0),new THREE.Vector3(0,0,0)]), new THREE.LineBasicMaterial({ color: 0x7F8C8D }));
+            string.visible = false;
+            drone.add(string);
+
+            packageBox = new THREE.Mesh(new THREE.BoxGeometry(0.4,0.4,0.4), new THREE.MeshStandardMaterial({ color: 0x8E44AD }));
+            packageBox.visible = false;
+            drone.add(packageBox);
+
+            drone.position.copy(PUST);
+            drone.position.y = 1;
+            scene.add(drone);
+        }
+
+        let fanRotation = 0;
+        function updateFans(mode) {
+            fanRotation += 0.2;
+            if (mode === 'vertical') {
+                verticalFans.forEach(fan => fan.rotation.x = fanRotation);
+                horizontalFan.rotation.x = 0;
+            } else if (mode === 'horizontal') {
+                verticalFans.forEach(fan => fan.rotation.x = 0);
+                horizontalFan.rotation.x = fanRotation;
+            } else {
+                verticalFans.forEach(fan => fan.rotation.x = 0);
+                horizontalFan.rotation.x = 0;
+            }
+        }
+
+        function startFlight(weight) {
+            if (isFlying) return;
+            isFlying = true;
+            startBtn.disabled = true;
+            weightSelect.disabled = true;
+
+            const MAX_LOAD = 5.0;
+            const isOverloaded = weight > MAX_LOAD;
+
+            flightStatus.textContent = "Picking up package at PUST...";
+            updateStatus();
+
+            setTimeout(() => {
+                packageBox.visible = true;
+                flightStatus.textContent = "Taking off vertically...";
+                updateStatus();
+
+                const takeoffTarget = new THREE.Vector3(PUST.x, 8, PUST.z);
+                moveTo(takeoffTarget, 2000, 'vertical', () => {
+                    flightStatus.textContent = "Transitioning to forward flight...";
+                    updateStatus();
+
+                    const flyTarget = new THREE.Vector3(USER.x, 8, USER.z);
+                    moveTo(flyTarget, 4000, 'horizontal', () => {
+                        flightStatus.textContent = "Descending to deliver...";
+                        updateStatus();
+
+                        const descendTarget = new THREE.Vector3(USER.x, 2, USER.z);
+                        moveTo(descendTarget, 2000, 'vertical', () => {
+                            string.visible = true;
+                            flightStatus.textContent = "Lowering package...";
+                            updateStatus();
+
+                            setTimeout(() => {
+                                if (isOverloaded) {
+                                    flightStatus.textContent = "⚠️ Tension overload! Releasing string...";
+                                    updateStatus();
+                                    setTimeout(() => {
+                                        string.visible = false;
+                                        packageBox.visible = false;
+                                        returnToHub();
+                                    }, 1500);
+                                } else {
+                                    flightStatus.textContent = "✅ Package delivered!";
+                                    updateStatus();
+                                    setTimeout(() => {
+                                        string.visible = false;
+                                        packageBox.visible = false;
+                                        returnToHub();
+                                    }, 1500);
+                                }
+                            }, 1000);
+                        });
+                    });
+                });
+            }, 1000);
+        }
+
+        function moveTo(target, duration, fanMode, onComplete) {
+            const startPos = drone.position.clone();
+            const tween = new TWEEN.Tween({ x: startPos.x, y: startPos.y, z: startPos.z })
+                .to({ x: target.x, y: target.y, z: target.z }, duration)
+                .easing(TWEEN.Easing.Quadratic.InOut)
+                .onUpdate(({ x, y, z }) => {
+                    drone.position.set(x, y, z);
+                    updateFans(fanMode);
+                    if (solarLevel < 95) {
+                        solarLevel += 0.05;
+                        updateStatus();
+                    }
+                })
+                .onComplete(() => {
+                    updateFans('hover');
+                    onComplete();
+                })
+                .start();
+        }
+
+        function returnToHub() {
+            flightStatus.textContent = "Returning to PUST...";
+            updateStatus();
+            const returnTarget = new THREE.Vector3(PUST.x, 8, PUST.z);
+            moveTo(returnTarget, 3000, 'horizontal', () => {
+                const landTarget = new THREE.Vector3(PUST.x, 1, PUST.z);
+                moveTo(landTarget, 2000, 'vertical', () => {
+                    flightStatus.textContent = "✅ Mission complete. Drone recharged.";
+                    updateStatus();
+                    isFlying = false;
+                    startBtn.disabled = false;
+                    weightSelect.disabled = false;
+                });
+            });
+        }
+
+        function updateStatus() {
+            solarPct.textContent = Math.round(solarLevel) + "%";
+            batteryPct.textContent = batteryLevel + "%";
+        }
+
+        function animate(time) {
+            requestAnimationFrame(animate);
+            controls.update();
+            TWEEN.update(time);
+            if (scene) updateFans(isFlying ? 'hover' : null);
+            renderer.render(scene, camera);
+        }
+
+        init();
+    </script>
+</body>
+</html>

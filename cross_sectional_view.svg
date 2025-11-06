@@ -1,0 +1,57 @@
+<svg width="450" height="300" viewBox="0 0 450 300" xmlns="http://www.w3.org/2000/svg" style="border: 1px solid #ddd; background: #eef2f7;">
+    <title>Step 3: Refined Design with Propulsion Systems</title>
+
+    <defs>
+        <style>
+            .fuselage { fill: #6c7a89; stroke: #4f5b66; stroke-width: 2; }
+            .wing { fill: #8696a7; stroke: #4f5b66; stroke-width: 2; }
+            .wing-attach { fill: #4f5b66; }
+            .solar-panel { fill: #3498db; stroke: #2980b9; stroke-width: 1; }
+            .solar-grid { stroke: #1a6f9f; stroke-width: 0.5; }
+            .vtol-motor-housing { fill: #2c3e50; stroke: #1f2933; stroke-width: 1.5; }
+            .vtol-prop-blade { fill: #95a5a6; stroke: #7f8c8d; stroke-width: 1; }
+            .pusher-motor-housing { fill: #e74c3c; stroke: #c0392b; stroke-width: 1.5; }
+            .pusher-prop-blade { fill: #f39c12; stroke: #d35400; stroke-width: 2; }
+        </style>
+    </defs>
+
+    <path d="M50,150 L100,145 L350,145 L380,150 L350,155 L100,155 Z" class="fuselage" id="droneFuselage" />
+    <circle cx="50" cy="150" r="4" fill="#4f5b66" />
+    
+    <path d="M100,145 L120,100 L350,100 L350,140 L100,140 Z" class="wing" />
+    <path d="M100,155 L120,200 L350,200 L350,160 L100,160 Z" class="wing" />
+
+    <rect x="360" y="130" width="40" height="5" class="wing" />
+    <rect x="360" y="165" width="40" height="5" class="wing" />
+    <rect x="380" y="145" width="5" height="20" class="wing" />
+
+    <rect x="105" y="146" width="100" height="8" class="solar-panel" />
+    <rect x="215" y="146" width="100" height="8" class="solar-panel" />
+    
+    <rect x="125" y="105" width="100" height="30" class="solar-panel" />
+    <rect x="240" y="105" width="100" height="30" class="solar-panel" />
+    
+    <rect x="125" y="165" width="100" height="30" class="solar-panel" />
+    <rect x="240" y="165" width="100" height="30" class="solar-panel" />
+
+    <circle cx="170" cy="90" r="10" class="vtol-motor-housing" />
+    <rect x="160" y="88" width="20" height="4" class="vtol-prop-blade" transform="rotate(45 170 90)" />
+    <rect x="160" y="88" width="20" height="4" class="vtol-prop-blade" transform="rotate(-45 170 90)" />
+
+    <circle cx="170" cy="210" r="10" class="vtol-motor-housing" />
+    <rect x="160" y="208" width="20" height="4" class="vtol-prop-blade" transform="rotate(45 170 210)" />
+    <rect x="160" y="208" width="20" height="4" class="vtol-prop-blade" transform="rotate(-45 170 210)" />
+
+    <circle cx="300" cy="90" r="10" class="vtol-motor-housing" />
+    <rect x="290" y="88" width="20" height="4" class="vtol-prop-blade" transform="rotate(45 300 90)" />
+    <rect x="290" y="88" width="20" height="4" class="vtol-prop-blade" transform="rotate(-45 300 90)" />
+
+    <circle cx="300" cy="210" r="10" class="vtol-motor-housing" />
+    <rect x="290" y="208" width="20" height="4" class="vtol-prop-blade" transform="rotate(45 300 210)" />
+    <rect x="290" y="208" width="20" height="4" class="vtol-prop-blade" transform="rotate(-45 300 210)" />
+
+    <circle cx="400" cy="150" r="12" class="pusher-motor-housing" />
+    <rect x="370" y="148" width="60" height="4" class="pusher-prop-blade" />
+    <text x="50" y="180" font-family="Arial" font-size="10" fill="#2c3e50" font-weight="bold">Nose</text>
+
+</svg>

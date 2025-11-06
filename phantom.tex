@@ -1,0 +1,275 @@
+% !TEX program = xelatex
+\documentclass[10pt]{beamer}
+\usetheme{Madrid}
+\usecolortheme{seahorse}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{amsmath}
+\usepackage{fontspec}
+\usepackage{xcolor}
+\usepackage[export]{adjustbox}
+
+% Custom color theme for GreenLift AI
+\definecolor{greendark}{RGB}{15, 71, 50}
+\definecolor{greenlight}{RGB}{41, 184, 126}
+\definecolor{bluedark}{RGB}{23, 63, 117}
+
+\setbeamercolor{structure}{fg=greendark}
+\setbeamercolor{title}{fg=greendark}
+\setbeamercolor{frametitle}{fg=bluedark}
+\setbeamercolor{block title}{fg=white,bg=greendark}
+\setbeamercolor{block body}{fg=black,bg=green!10}
+\setbeamercolor{alerted text}{fg=bluedark}
+
+% Remove navigation symbols to save space
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{footline}[frame number]
+
+% Title and author information
+\title[GreenLift AI]{GreenLift AI:\\Intelligent VTOL Drone Delivery Ecosystem for SMEs}
+\subtitle{Zero-Carbon Logistics with Business Intelligence}
+\author[Team Phantom]{Parvez Ali \and Arman Islam \and Lamia Islam \and MD Basim Al Zabir Shammo}
+\institute[PUST]{Pabna University of Science and Technology\\Department of Information and Communication Engineering}
+\date{\today}
+
+% Department logo on title page - properly sized and positioned
+\titlegraphic{\includegraphics[width=2cm]{pust.png}}
+
+\begin{document}
+
+% Title Slide - fixed logo sizing and positioning
+\begin{frame}
+\titlepage
+\begin{center}
+\large SOLVIO AI Hackathon 2025 Finalist\\
+\small Presented by Team Phantom
+\end{center}
+\end{frame}
+
+% Table of Contents - now properly organized with fewer sections
+\begin{frame}{Outline}
+\tableofcontents
+\end{frame}
+
+% Section 1: Introduction
+\section{Introduction}
+
+\begin{frame}{The Challenge for Bangladesh's SMEs}
+\begin{block}{Critical Industry Challenges}
+\item \textbf{Inefficient Logistics:} 89\% of SMEs struggle with costly last-mile delivery
+\item \textbf{Unreliable in Bad Weather:} 91\% report delayed deliveries during monsoon season
+\item \textbf{High Operational Costs:} Delivery costs consume 18-25\% of operational budgets
+\item \textbf{Limited Business Intelligence:} 73\% lack real-time analytics for inventory and forecasting
+\item \textbf{Environmental Impact:} Traditional delivery systems contribute to carbon emissions
+\end{block}
+\end{frame}
+
+% Section 2: Vision & Mission
+\section{Vision \& Mission}
+
+\begin{frame}{Vision \& Mission}
+\begin{columns}[T]
+\column{0.5\textwidth}
+\begin{block}{\textcolor{greenlight}{Vision}}
+To build a scalable, green logistics network that transforms last-mile delivery and business intelligence for millions of SMEs across South Asia.
+\end{block}
+
+\column{0.5\textwidth}
+\begin{block}{\textcolor{white}{Mission}}
+Empower SMEs in Bangladesh with an eco-friendly, AI-driven drone delivery ecosystem that enhances operational efficiency, sustainability, and data-driven decision-making.
+\end{block}
+\end{columns}
+
+\vspace{0.5cm}
+\begin{block}{Core Values}
+\item Zero carbon emissions through solar-powered drones
+\item One-time setup cost without recurring wages
+\item First sustainable delivery ecosystem for Bangladesh
+\end{block}
+\end{frame}
+
+% Section 3: Solution
+\section{Solution}
+
+\begin{frame}{GreenLift AI: The Integrated Solution}
+\begin{block}{A Revolutionary Approach}
+GreenLift AI is an integrated, eco-friendly drone delivery and AI-powered business intelligence platform designed specifically for SMEs in Bangladesh.
+\end{block}
+
+\begin{columns}[T]
+\column{0.55\textwidth}
+\item \textbf{Solar-Powered VTOL Drones:} Vertical take-off and landing with solar energy harvesting
+\item \textbf{AI Dashboard:} Real-time business insights for inventory, sales, and customer analytics
+\item \textbf{Zero-Carbon Logistics:} Eliminates carbon footprint while reducing delivery costs
+\item \textbf{Complete Solution:} One-time setup cost without recurring wages or salary
+\item \textbf{Smart Tension System:} Automatic package release if weight exceeds safe limits
+
+\column{0.45\textwidth}
+\centering
+\includegraphics[width=0.9\textwidth, height=4cm, keepaspectratio]{VTOL.png}
+\end{columns}
+\end{frame}
+
+% Section 4: Technology
+\section{Technology}
+
+\begin{frame}{Technology Architecture}
+\centering
+\includegraphics[width=0.7\textwidth, height=4cm, keepaspectratio]{drone_by_gemini.png}
+
+\begin{block}{System Components}
+\item \textbf{VTOL Drone:} Solar power + battery backup, vertical-to-horizontal flight transition
+\item \textbf{Smart Tension Sensor:} Automatic package release if weight exceeds 5kg limit
+\item \textbf{AI Dashboard:} Real-time business analytics and delivery tracking
+\item \textbf{Modular Micro-Hubs:} Solar-powered charging stations for drone fleet
+\end{block}
+\end{frame}
+
+% Section 5: Benefits
+\section{Benefits \& Impact}
+
+\begin{frame}{Tangible Benefits for SMEs}
+\begin{columns}[T]
+\column{0.6\textwidth}
+\begin{block}{Operational Advantages}
+\item \textbf{Cost Reduction:} 40-60\% lower delivery costs
+\item \textbf{Speed:} 85\% faster delivery even in bad weather
+\item \textbf{Sustainability:} 100\% zero-carbon emissions
+\item \textbf{Reliability:} 99.2\% on-time delivery rate
+\end{block}
+
+\begin{block}{Environmental Impact}
+\item 0.85kg CO\textsubscript{2} saved per delivery
+\item 4.2 tons CO\textsubscript{2} reduction annually per micro-hub
+\item No noise pollution in residential areas
+\end{block}
+
+\column{0.4\textwidth}
+\centering
+\includegraphics[width=0.8\textwidth, height=3cm, keepaspectratio]{pust.png}
+\end{columns}
+\end{frame}
+
+% Section 6: Competitive Advantage
+\section{Competitive Advantage}
+
+\begin{frame}{GreenLift AI vs. Traditional Delivery Systems}
+\begin{table}
+\resizebox{\textwidth}{!}{
+\begin{tabular}{lcccc}
+\toprule
+\textbf{Feature} & \textbf{GreenLift AI} & \textbf{Traditional} & \textbf{Ride-sharing} \\
+\midrule
+Carbon Footprint & \textcolor{greenlight}{Zero} & High & Medium \\
+Delivery Cost (BDT) & \textcolor{greenlight}{15-25} & 50-75 & 35-60 \\
+Weather Resilience & \textcolor{greenlight}{High} & Low & Medium \\
+Business Analytics & \textcolor{greenlight}{Included} & Not available & Limited \\
+Wage Dependency & \textcolor{greenlight}{None} & High & Medium \\
+\bottomrule
+\end{tabular}
+}
+\end{table}
+
+\begin{block}{Key Differentiator}
+Only solution combining zero-carbon delivery with AI-powered business intelligence
+\end{block}
+\end{frame}
+
+% Section 7: Business Model
+\section{Business Model}
+
+\begin{frame}{Sustainable Growth Strategy}
+\begin{columns}[T]
+\column{0.6\textwidth}
+\begin{block}{Revenue Streams}
+\item \textbf{Pay-per-delivery model} (15-30 BDT per delivery)
+\item \textbf{Subscription plans} for business intelligence dashboard
+\item \textbf{Fleet leasing} for larger SMEs
+\end{block}
+
+\begin{block}{Scalability Plan}
+\item \textbf{Phase 1 (6 months):} Pabna district pilot
+\item \textbf{Phase 2 (12 months):} Northern Bangladesh expansion
+\item \textbf{Phase 3 (24 months):} Nationwide coverage
+\end{block}
+
+\column{0.4\textwidth}
+\centering
+\includegraphics[width=0.8\textwidth, height=3cm, keepaspectratio]{VTOL.png}
+\end{columns}
+\end{frame}
+
+% Section 8: Team - fixed photo sizing
+\section{Team}
+
+\begin{frame}{Meet Team Phantom}
+\begin{columns}[T]
+\column{0.25\textwidth}
+\centering
+\includegraphics[width=0.8\textwidth, height=2.5cm, keepaspectratio]{parvej.jpg}\\
+\textbf{Parvez Ali}\\
+Team Lead
+
+\column{0.25\textwidth}
+\centering
+\includegraphics[width=0.8\textwidth, height=2.5cm, keepaspectratio]{arman.png}\\
+\textbf{Arman Islam}\\
+Technical
+
+\column{0.25\textwidth}
+\centering
+\includegraphics[width=0.8\textwidth, height=2.5cm, keepaspectratio]{lamia.jpeg}\\
+\textbf{Lamia Islam}\\
+Marketing
+
+\column{0.25\textwidth}
+\centering
+\includegraphics[width=0.8\textwidth, height=2.5cm, keepaspectratio]{shammo.jpeg}\\
+\textbf{MD Basim Al Zabir Shammo}\\
+AI Specialist
+\end{columns}
+
+\vspace{0.5cm}
+\begin{center}
+\begin{block}{Contact}
+armanislam527@gmail.com
+\end{block}
+\end{center}
+\end{frame}
+
+% Section 9: Next Steps
+\section{Next Steps}
+
+\begin{frame}{Our Journey Forward}
+\begin{block}{Roadmap}
+\item \textbf{Complete prototype development} (2 months)
+\item \textbf{Field testing} with 5 SME partners in Pabna (3 months)
+\item \textbf{Regulatory approval} from Bangladesh Civil Aviation Authority (4 months)
+\item \textbf{Partnership} with solar technology provider (2 months)
+\item \textbf{Pilot program} with selected SMEs across Pabna district
+\end{block}
+
+\vspace{0.5cm}
+\begin{center}
+\large \textbf{For partnership and investment opportunities:}\\
+armanislam527@gmail.com
+\end{center}
+\end{frame}
+
+% Closing Slide
+\begin{frame}
+\centering
+\includegraphics[width=0.3\textwidth]{pust.png}\\
+\vspace{0.5em}
+\Large\textbf{GreenLift AI}\\
+\large Intelligent VTOL Drone Delivery Ecosystem for SMEs\\
+\vspace{0.5em}
+\large Team Phantom\\
+Pabna University of Science and Technology\\
+\vspace{0.5em}
+\large SOLVIO AI Hackathon 2025 Finalist\\
+\vspace{0.5em}
+\large Thank You\\
+\end{frame}
+
+\end{document}

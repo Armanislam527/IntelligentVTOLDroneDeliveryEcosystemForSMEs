@@ -1,1 +1,76 @@
-my consern is to simulate the drone delivery direct on map i want to simulate the drone to fly over the real map from one place to another place and the route of the drone will be marked on the map. start and destination will also indicated.the drone simulation can be over my university Pabna University of Science and Technology or around pabna or in another place like jashore city in bangladesh and the simulation can be over on 1 km of distance. you can use the svg model or also can use a js library to simulate it without svg. i need a ultrarealistic simulation.if possible then simulate it 3d on a real map.do the simulation in Full 3D Scene CesiumJS / Three.js + terrain True 3D flight with altitude + lighting Heavy but beautiful (ideal for hackathon video) and my campuse exact location is:[24.013306177900954, 89.27968061757348] use openstreetmaps api so that no need to put api token lets design it.i want the drone path to be a delivery route (takeoff → drop → return).use proper z index for the drone so that i can be visible clearly. implement this by just raw html and css .
+
+Parvez Ali
+urparvezali@gmail.com
++8801873574000
+https://www.facebook.com/urparvezali/
+https://linkedin.com/in/urparvezali/
+
+
+Arman Islam
+ Male
+armanislam527@gmail.com
+01521751005
+https://www.facebook.com/armanislam.527/
+https://cv-of-arman.netlify.app/
+https://www.linkedin.com/in/armanislam527/
+
+
+Lamia Islam
+ Female
+lamiaislamzy@gmail.com
+01790977576
+https://www.facebook.com/lam.albedo/
+https://www.linkedin.com/in/lamia-islam-087943232/
+
+
+MD Basim Al Zabir Shammo
+ Male
+al.zabir.shammo@gmail.com
+01744540590
+https://www.linkedin.com/in/md-basim-al-zabir-shammo-759082205/
+https://www.researchgate.net/profile/Basim-Al-Zabir-Shammo
+https://scholar.google.com/citations?user=FGLF-0sAAAAJ&hl=en
+
+
+
+
+
+
+
+
+here i want to build something with you.you maybe know everything as i provided.but for more clarification please revice the pdf again.here some infor about my full team>>
+Parvez Ali
+urparvezali@gmail.com
++8801873574000
+https://www.facebook.com/urparvezali/ 
+https://linkedin.com/in/urparvezali/ 
+
+
+Arman Islam
+ Male
+armanislam527@gmail.com
+01521751005
+https://www.facebook.com/armanislam.527/ 
+https://cv-of-arman.netlify.app/ 
+https://www.linkedin.com/in/armanislam527/ 
+
+
+Lamia Islam
+ Female
+lamiaislamzy@gmail.com
+01790977576
+https://www.facebook.com/lam.albedo/ 
+https://www.linkedin.com/in/lamia-islam-087943232/ 
+
+
+MD Basim Al Zabir Shammo
+ Male
+al.zabir.shammo@gmail.com
+01744540590
+https://www.linkedin.com/in/md-basim-al-zabir-shammo-759082205/ 
+https://www.researchgate.net/profile/Basim-Al-Zabir-Shammo 
+https://scholar.google.com/citations?user=FGLF-0sAAAAJ&hl=en
+ 
+
+
+please remember all info about all member.now i will provide you a list of files then your task is to arrange them in a single index.html for the portfolio of the webpage.like team details section will one category,simulation button in one side that will redirect to server_simulation.htm from the index page for simulation.a section will hold the preliminary idea on pdf preview and a button will be there for download it.a section will there for viewing or downloading my presentation slide they paybe in pdf or pptx and it also need to be downloadable.every team member info will be shonw shorty in the front index page and when they are hovered or clicked then there will be showed their details info and one side you can show also the diagram or images of the vtol drone also .you can use the VTOL.png and/or drone_by_gemini.png for visual conceptualization.the presentation name will be phantom.pdf/pptx. all name are pointing their corresponding files. use versity and dept logo at the page. some html in there are experimental.now i want to make a best indes.html page desing for covering all the requirements. the site will be live in  "https://armanislam527.github.io/IntelligentVTOLDroneDeliveryEcosystemForSMEs/ " all the local file will be uploaded/pushed into  this git repo and the site will be live frome there.please help me to desing a overall purpose index.html page for the requirements.  now my project directory is given >>

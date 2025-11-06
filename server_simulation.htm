@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GreenLift AI - Simulation</title>
+    <link rel="shortcut icon" href="drone_by_gemini.png" type="image/x-icon">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+        .container {
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 0 15px;
+        }
+        .view {
+            display: none;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+        .active {
+            display: block;
+        }
+        h1, h2, h3 {
+            color: #2c3e50;
+        }
+        h1 {
+            text-align: center;
+            margin-top: 0;
+        }
+        /* --- Part 1: User App --- */
+        .app-container {
+            width: 100%;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        select, input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        button {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        button:hover:not(:disabled) {
+            background: linear-gradient(135deg, #2980b9, #1a5276);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
+        }
+        button:disabled {
+            background: #95a5a6;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        .confirmation, .loading {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+        }
+        .confirmation {
+            background-color: #e8f4fc;
+            border-left: 4px solid #3498db;
+            display: none;
+        }
+        .loading {
+            text-align: center;
+            display: none;
+        }
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* --- Part 2: Server Dashboard --- */
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .status-badge {
+            background: #e74c3c;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        .status-badge.assigned {
+            background: #2ecc71;
+        }
+        .order-card {
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .order-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        .assign-btn {
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            max-width: 250px;
+            margin: 20px auto;
+        }
+        .drone-status {
+            background: #fff8e1;
+            border-left: 4px solid #f1c40f;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            display: none;
+        }
+        .next-btn {
+            background: linear-gradient(135deg, #9b59b6, #8e44ad);
+            max-width: 300px;
+            margin: 20px auto;
+        }
+        .drone_container {
+            display: flex;
+            flex-direction: row;
+            margin: 15px auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- PART 1: USER ORDER VIEW -->
+        <div id="userView" class="view active">
+            <div class="app-container">
+                <h1>📦 GreenLift AI</h1>
+                <button onclick="window.location.href='index.html';">🏠 Go to Homepage</button>
+                <h2>Place Your Order</h2>
+
+                <div class="form-group">
+                    <label for="product">Select Product:</label>
+                    <select id="product">
+                        <option value="">-- Choose a Product --</option>
+                        <option value="medicine">Medicine (1kg)</option>
+                        <option value="groceries">Groceries (5kg)</option>
+                        <option value="electronics">Electronics (3kg)</option>
+                        <option value="documents">Documents (0.5kg)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="address">Delivery Address:</label>
+                    <input type="text" id="address" placeholder="e.g., Pabna University of Science and Technology, Pabna">
+                </div>
+
+                <button id="orderButton">🚀 Order Now</button>
+
+                <div class="loading" id="loading">
+                    <div class="loading-spinner"></div>
+                    <p>Sending order to GreenLift AI Server...</p>
+                </div>
+
+                <div class="confirmation" id="confirmation">
+                    <p>✅ Order Placed Successfully!</p>
+                    <p><strong>Product:</strong> <span id="confirmProduct">-</span></p>
+                    <p><strong>Address:</strong> <span id="confirmAddress">-</span></p>
+                    <p><strong>Order ID:</strong> <span id="orderId">-</span></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- PART 2: SERVER DASHBOARD VIEW -->
+        <div id="serverView" class="view">
+            <h1>📡 GreenLift AI Server Dashboard</h1>
+            <div class="dashboard-header">
+                <h2>Incoming Order</h2>
+                <div class="status-badge" id="serverStatus">Pending</div>
+            </div>
+
+            <div class="order-card">
+                <div class="order-row">
+                    <strong>Order ID:</strong>
+                    <span id="dashOrderId">-</span>
+                </div>
+                <div class="order-row">
+                    <strong>Product:</strong>
+                    <span id="dashProduct">-</span>
+                </div>
+                <div class="order-row">
+                    <strong>Weight:</strong>
+                    <span id="dashWeight">-</span>
+                </div>
+                <div class="order-row">
+                    <strong>Destination:</strong>
+                    <span id="dashAddress">-</span>
+                </div>
+                <div class="order-row">
+                    <strong>Timestamp:</strong>
+                    <span id="dashTime">-</span>
+                </div>
+            </div>
+
+            <button id="assignDroneBtn" class="assign-btn">🚁 Assign Drone D-001</button>
+            <div class="drone_container">
+                <div>
+                <p>The Image of the Real VTOL Drone is :</p>
+<img src="VTOL.png" height="300" alt="Image of the VTOL drone"></div>
+<div>
+<p>And the schematic of the VTOL Drone is :</p>
+<img src="greenlift-drone-3d.svg" alt="Schematic of the VTOL drone" height="300"> </div>
+<div class="drone-status" id="droneStatus">
+            </div></div>
+                <p>✅ Drone D-001 assigned successfully!</p>
+                <p>Status: <strong id="droneStatusText">Preparing for takeoff...</strong></p>
+            
+
+            <button id="nextToFlightBtn" class="next-btn" style="display:none;">➡️ View Drone Flight Simulation</button>
+        </div>
+    </div>
+<h3>Please note that this is only a simulation of the server and the webpage there are no real logic or backend or server behind it.It is only demographic purpose only</h3>
+    <script>
+        // Global order data
+        let currentOrder = null;
+
+        // Part 1: Handle order submission
+        document.getElementById('orderButton').addEventListener('click', function() {
+            const product = document.getElementById('product').value;
+            const address = document.getElementById('address').value.trim();
+
+            if (!product || !address) {
+                alert("Please select a product and enter your address!");
+                return;
+            }
+
+            document.getElementById('loading').style.display = 'block';
+            this.disabled = true;
+
+            // Simulate weight based on product
+            const weights = {
+                medicine: "1 kg",
+                groceries: "5 kg",
+                electronics: "3 kg",
+                documents: "0.5 kg"
+            };
+
+            setTimeout(() => {
+                const orderId = `GL-${Math.floor(Math.random() * 1000).toString().padStart(3, '0')}`;
+                const productText = document.querySelector(`#product option[value="${product}"]`).textContent;
+
+                // Save order
+                currentOrder = {
+                    id: orderId,
+                    product: productText,
+                    weight: weights[product],
+                    address: address,
+                    timestamp: new Date().toLocaleString()
+                };
+
+                // Update UI
+                document.getElementById('confirmProduct').textContent = productText;
+                document.getElementById('confirmAddress').textContent = address;
+                document.getElementById('orderId').textContent = orderId;
+                document.getElementById('confirmation').style.display = 'block';
+                document.getElementById('loading').style.display = 'none';
+
+                // Auto-switch to server view after 2 seconds
+                setTimeout(() => {
+                    document.getElementById('userView').classList.remove('active');
+                    document.getElementById('serverView').classList.add('active');
+
+                    // Populate dashboard
+                    document.getElementById('dashOrderId').textContent = currentOrder.id;
+                    document.getElementById('dashProduct').textContent = currentOrder.product;
+                    document.getElementById('dashWeight').textContent = currentOrder.weight;
+                    document.getElementById('dashAddress').textContent = currentOrder.address;
+                    document.getElementById('dashTime').textContent = currentOrder.timestamp;
+                }, 2000);
+
+            }, 1500);
+        });
+
+        // Part 2: Assign Drone
+        document.getElementById('assignDroneBtn').addEventListener('click', function() {
+            this.disabled = true;
+            document.getElementById('serverStatus').textContent = "Assigned";
+            document.getElementById('serverStatus').className = "status-badge assigned";
+
+            const statusText = document.getElementById('droneStatusText');
+            const droneStatusDiv = document.getElementById('droneStatus');
+            droneStatusDiv.style.display = 'block';
+
+            // Simulate drone prep sequence
+            let steps = [
+                "Preparing for takeoff...",
+                "Solar panels active. Battery: 98%",
+                "VTOL systems online",
+                "Route calculated to destination",
+                "Takeoff initiated!"
+            ];
+
+            let i = 0;
+            const interval = setInterval(() => {
+                if (i < steps.length) {
+                    statusText.textContent = steps[i];
+                    i++;
+                } else {
+                    clearInterval(interval);
+                    document.getElementById('nextToFlightBtn').style.display = 'block';
+                }
+            }, 1200);
+        });
+
+        // Navigate to Flight Simulation (Part 3 - coming next)
+        document.getElementById('nextToFlightBtn').addEventListener('click', function() {
+            alert("✅ Ready for Part 3: Drone Flight Simulation!\n\nIn the next step, we'll visualize the drone's journey.");
+             const weightMap = {
+            "1 kg": "1",
+            "3 kg": "3",
+            "5 kg": "5",
+            "0.5 kg": "1" // map documents to 1kg for demo
+        };
+        const weight = weightMap[currentOrder.weight] || "5";
+        window.location.href = `ultrarealistic_simulation.htm?weight=${weight}`;
+            // We'll replace this with actual flight view later
+        });
+    </script>
+</body>
+</html>

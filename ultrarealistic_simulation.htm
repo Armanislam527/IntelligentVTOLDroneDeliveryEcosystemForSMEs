@@ -5,7 +5,8 @@
 <title>GreenLift AI – Ultra-Realistic Drone Delivery</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
-    *{margin:0;padding:0;box-sizing:border-box;}
+    *{
+        margin:0;padding:0;box-sizing:border-box;}
     body{font-family:'Segoe UI',sans-serif;background:#f5f5f5;}
     #map-container{position:relative;width:100vw;height:100vh;overflow:hidden;}
     #map{width:100%;height:100%;border:none;}
@@ -45,7 +46,18 @@
     .drone{
         position:absolute;font-size:0;pointer-events:none;
         z-index:20000;transform:translate(-50%,-50%);
-    }
+    }button {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
     .drone img{width:48px;height:48px;filter:drop-shadow(0 0 8px #0f0);}
 </style>
 </head>
@@ -58,9 +70,10 @@
         frameborder="0"></iframe>
 
     <div id="top-bar">
-        <button id="backBtn">Back</button>
-        <button id="restartBtn">Restart</button>
-        <button id="mechanismBtn">Show Mechanism</button>
+        <button id="backBtn">🏠 Go to Homepage</button>
+        <button onclick="window.location.href = 'server_simulation.htm';">🔧 Go To Srver Simulation</button>
+        <button id="restartBtn">🔄 Restart</button>
+        <button id="mechanismBtn">🦾 Show Mechanism</button>
     </div>
 
     <div id="overlay"></div>
