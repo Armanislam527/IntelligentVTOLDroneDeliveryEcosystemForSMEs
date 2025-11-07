@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GreenLift AI - Unified Simulation</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f2f5;
+            overflow-x: hidden;
+        }
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 0;
+        }
+        .view {
+            display: none;
+            width: 100%;
+            min-height: 100vh;
+        }
+        .active {
+            display: block;
+        }
+        /* Navigation Bar */
+        .nav-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            padding: 15px 20px;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .nav-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        .nav-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        .nav-btn {
+            background: rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .nav-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+        .nav-btn.active {
+            background: rgba(255,255,255,0.4);
+        }
+        /* Page Content Styling */
+        .page-content {
+            padding: 100px 20px 20px;
+        }
+        .page-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        h2 {
+            color: #3498db;
+            margin-bottom: 20px;
+        }
+        .section {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .stat-card {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            border-left: 4px solid #3498db;
+        }
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        .stat-label {
+            font-size: 0.9rem;
+            color: #7f8c8d;
+        }
+        .ai-insights {
+            background: #e8f4fc;
+            border-left: 4px solid #3498db;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .map-container {
+            width: 100%;
+            height: 500px;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            margin: 20px 0;
+        }
+        .map-container iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        .simulation-controls {
+            display: flex;
+            gap: 15px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        .control-group {
+            flex: 1;
+            min-width: 200px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #2c3e50;
+        }
+        select, button {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            font-size: 16px;
+        }
+        button {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        button:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.4);
+        }
+        button:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+        }
+        .status-display {
+            background: #2c3e50;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            font-family: monospace;
+        }
+        .drone-visualization {
+            display: flex;
+            justify-content: center;
+            margin: 30px 0;
+        }
+        .drone-visualization svg {
+            max-width: 100%;
+            height: auto;
+        }
+        .analytics-charts {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .chart-container {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        .chart-placeholder {
+            height: 200px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #7f8c8d;
+            font-style: italic;
+        }
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+            margin-top: 30px;
+        }
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            .simulation-controls {
+                flex-direction: column;
+            }
+            .analytics-charts {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Navigation Bar -->
+        <div class="nav-bar">
+            <div class="nav-title">GreenLift AI - Unified Simulation</div>
+            <div class="nav-buttons">
+                <button class="nav-btn active" data-target="orderView">Order</button>
+                <button class="nav-btn" data-target="simulationView">Simulation</button>
+                <button class="nav-btn" data-target="analyticsView">Analytics</button>
+                <button class="nav-btn" data-target="mapView">Map</button>
+            </div>
+        </div>
+
+        <!-- Order View -->
+        <div id="orderView" class="view active">
+            <div class="page-content">
+                <div class="page-header">
+                    <h1>📦 GreenLift AI</h1>
+                    <h2>Place Your Order</h2>
+                </div>
+                
+                <div class="section">
+                    <div class="form-group">
+                        <label for="product">Select Product:</label>
+                        <select id="product">
+                            <option value="">-- Choose a Product --</option>
+                            <option value="medicine">Medicine (1kg)</option>
+                            <option value="groceries">Groceries (5kg)</option>
+                            <option value="electronics">Electronics (3kg)</option>
+                            <option value="documents">Documents (0.5kg)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="address">Delivery Address:</label>
+                        <input type="text" id="address" placeholder="e.g., Pabna University, Pabna" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 16px; margin: 10px 0;">
+                    </div>
+
+                    <button id="orderButton" style="width: 100%; padding: 15px; background: linear-gradient(135deg, #3498db, #2980b9); color: white; border: none; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; transition: all 0.3s;">🚀 Order Now</button>
+
+                    <div class="loading" id="loading" style="display: none; text-align: center; margin-top: 20px;">
+                        <div style="width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 4px solid #3498db; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 10px;"></div>
+                        <p>Sending order to GreenLift AI Server...</p>
+                    </div>
+
+                    <div class="confirmation" id="confirmation" style="margin-top: 20px; padding: 15px; background-color: #e8f4fc; border-left: 4px solid #3498db; border-radius: 8px; display: none;">
+                        <p>✅ Order Placed Successfully!</p>
+                        <p><strong>Product:</strong> <span id="confirmProduct">-</span></p>
+                        <p><strong>Address:</strong> <span id="confirmAddress">-</span></p>
+                        <p><strong>Order ID:</strong> <span id="orderId">-</span></p>
+                    </div>
+                </div>
+                
+                <div class="section">
+                    <h2>AI-Powered Business Insights</h2>
+                    <div class="ai-insights">
+                        <p>Based on your order history and delivery patterns, our AI predicts:</p>
+                        <ul>
+                            <li>Optimal delivery window: 10:00 AM - 12:00 PM</li>
+                            <li>Estimated fuel savings: 15% compared to traditional delivery</li>
+                            <li>Inventory recommendation: 20% higher stock for next week</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Simulation View -->
+        <div id="simulationView" class="view">
+            <div class="page-content">
+                <div class="page-header">
+                    <h1>🚁 Drone Flight Simulation</h1>
+                    <h2>Real-time VTOL Drone Delivery Process</h2>
+                </div>
+                
+                <div class="section">
+                    <div class="simulation-controls">
+                        <div class="control-group">
+                            <label for="packageWeight">Package Weight</label>
+                            <select id="packageWeight">
+                                <option value="0.5">Documents (0.5 kg)</option>
+                                <option value="1">Medicine (1 kg)</option>
+                                <option value="3">Electronics (3 kg)</option>
+                                <option value="5">Groceries (5 kg)</option>
+                                <option value="7">Overload Test (7 kg)</option>
+                            </select>
+                        </div>
+                        <div class="control-group">
+                            <label>&nbsp;</label>
+                            <button id="startSimulation">▶️ Start Simulation</button>
+                        </div>
+                        <div class="control-group">
+                            <label>&nbsp;</label>
+                            <button id="resetSimulation" disabled>🔄 Reset</button>
+                        </div>
+                    </div>
+                    
+                    <div class="status-display" id="simulationStatus">
+                        Status: Ready to begin simulation
+                    </div>
+                    
+                    <div class="drone-visualization">
+                        <!-- SVG drone simulation will be injected here -->
+                        <svg id="droneSvg" viewBox="0 0 800 500" xmlns="http://www.w3.org/2000/svg">
+                            <rect x="0" y="0" width="800" height="500" fill="#e8f4fc" />
+                            <rect x="0" y="450" width="800" height="50" fill="#27ae60" />
+                            <rect x="100" y="400" width="60" height="50" fill="#9b59b6" rx="5" />
+                            <text x="130" y="390" font-size="12" text-anchor="middle" fill="#2c3e50">Drone Hub</text>
+                            <circle cx="650" cy="430" r="15" fill="#e74c3c" />
+                            <text x="650" y="410" font-size="12" text-anchor="middle" fill="#2c3e50">User</text>
+                            <path d="M130,400 L130,210 L650,210 L650,430" 
+                                  stroke="#3498db" stroke-dasharray="5,5" fill="none" stroke-width="2" id="flightPath" opacity="0.6"/>
+                            
+                            <g id="droneAssembly" transform="translate(0,0)">
+                                <rect x="115" y="385" width="30" height="15" rx="5" fill="#3498db" />
+                                <rect x="90" y="390" width="80" height="5" fill="#5D6D7E" />
+                                
+                                <g id="verticalFans">
+                                    <g class="fan" id="fan1">
+                                        <rect x="90" y="387.5" width="10" height="10" fill="#2c3e50" rx="2"/>
+                                        <line x1="91" y1="392.5" x2="99" y2="392.5" stroke="#7f8c8d" stroke-width="1.5" class="blade"/>
+                                        <line x1="95" y1="388.5" x2="95" y2="396.5" stroke="#7f8c8d" stroke-width="1.5" class="blade"/>
+                                    </g>
+                                    <g class="fan" id="fan2">
+                                        <rect x="160" y="387.5" width="10" height="10" fill="#2c3e50" rx="2"/>
+                                        <line x1="161" y1="392.5" x2="169" y2="392.5" stroke="#7f8c8d" stroke-width="1.5" class="blade"/>
+                                        <line x1="165" y1="388.5" x2="165" y2="396.5" stroke="#7f8c8d" stroke-width="1.5" class="blade"/>
+                                    </g>
+                                    <g class="fan" id="fan3">
+                                        <rect x="110" y="387.5" width="10" height="10" fill="#2c3e50" rx="2"/>
+                                        <line x1="111" y1="392.5" x2="119" y2="392.5" stroke="#7f8c8d" stroke-width="1.5" class="blade"/>
+                                        <line x1="115" y1="388.5" x2="115" y2="396.5" stroke="#7f8c8d" stroke-width="1.5" class="blade"/>
+                                    </g>
+                                    <g class="fan" id="fan4">
+                                        <rect x="140" y="387.5" width="10" height="10" fill="#2c3e50" rx="2"/>
+                                        <line x1="141" y1="392.5" x2="149" y2="392.5" stroke="#7f8c8d" stroke-width="1.5" class="blade"/>
+                                        <line x1="145" y1="388.5" x2="145" y2="396.5" stroke="#7f8c8d" stroke-width="1.5" class="blade"/>
+                                    </g>
+                                </g>
+                                
+                                <g id="horizontalFan" opacity="0.8">
+                                    <rect x="145" y="389" width="8" height="8" fill="#2c3e50" rx="1"/>
+                                    <line x1="149" y1="386" x2="149" y2="396" stroke="#7f8c8d" stroke-width="2" class="blade" id="propBlade"/>
+                                </g>
+                                
+                                <line id="string" x1="130" y1="400" x2="130" y2="400" 
+                                      stroke="#7f8c8d" stroke-width="2" opacity="0"/>
+                                
+                                <rect id="package" x="125" y="400" width="10" height="10" fill="#8e44ad" opacity="0"/>
+                            </g>
+                        </svg>
+                    </div>
+                </div>
+                
+                <div class="section">
+                    <h2>Delivery Statistics</h2>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-value">85%</div>
+                            <div class="stat-label">Solar Power</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">100%</div>
+                            <div class="stat-label">Battery Level</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">42</div>
+                            <div class="stat-label">Successful Deliveries</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">0</div>
+                            <div class="stat-label">Accidents</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Analytics View -->
+        <div id="analyticsView" class="view">
+            <div class="page-content">
+                <div class="page-header">
+                    <h1>📊 AI Business Analytics</h1>
+                    <h2>Intelligent Insights for SMEs</h2>
+                </div>
+                
+                <div class="section">
+                    <h2>Financial Performance</h2>
+                    <div class="analytics-charts">
+                        <div class="chart-container">
+                            <h3>Profit Margins</h3>
+                            <div class="chart-placeholder">AI Chart: Profit trend analysis</div>
+                        </div>
+                        <div class="chart-container">
+                            <h3>Delivery Cost Savings</h3>
+                            <div class="chart-placeholder">AI Chart: Cost comparison (traditional vs drone)</div>
+                        </div>
+                    </div>
+                    
+                    <div class="ai-insights">
+                        <h3>AI-Predicted Insights</h3>
+                        <p>Our machine learning models analyze your delivery patterns and predict:</p>
+                        <ul>
+                            <li><strong>Cost Reduction:</strong> 35% lower operational costs compared to traditional logistics</li>
+                            <li><strong>Revenue Growth:</strong> 22% increase in customer retention due to faster delivery</li>
+                            <li><strong>Seasonal Trends:</strong> 40% higher demand expected during festival seasons</li>
+                            <li><strong>Route Optimization:</strong> 18% improvement in delivery efficiency predicted</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="section">
+                    <h2>Operational Metrics</h2>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-value">98.7%</div>
+                            <div class="stat-label">On-Time Delivery Rate</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">0.85kg</div>
+                            <div class="stat-label">Avg. CO₂ Saved/Order</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">85%</div>
+                            <div class="stat-label">Renewable Energy Usage</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">24/7</div>
+                            <div class="stat-label">Service Availability</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="section">
+                    <h2>Inventory Intelligence</h2>
+                    <div class="ai-insights">
+                        <p>Based on historical data and demand forecasting:</p>
+                        <ul>
+                            <li>Stock up on <strong>Medicine</strong> by 30% for next quarter</li>
+                            <li>Reduce <strong>Groceries</strong> inventory by 15% in off-season</li>
+                            <li>Optimize <strong>Electronics</strong> orders for 20% cost savings</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Map View -->
+        <div id="mapView" class="view">
+            <div class="page-content">
+                <div class="page-header">
+                    <h1>🗺️ Live Delivery Map</h1>
+                    <h2>Real-time Drone Tracking</h2>
+                </div>
+                
+                <div class="section">
+                    <div class="map-container">
+                        <iframe src="https://www.openstreetmap.org/export/embed.html?bbox=89.225,23.995,89.245,24.015&layer=mapnik&marker=24.005,89.235" 
+                                frameborder="0"></iframe>
+                    </div>
+                    
+                    <div class="simulation-controls">
+                        <div class="control-group">
+                            <label for="mapWeight">Simulate Delivery</label>
+                            <select id="mapWeight">
+                                <option value="1">Medicine (1 kg)</option>
+                                <option value="3">Electronics (3 kg)</option>
+                                <option value="5">Groceries (5 kg)</option>
+                            </select>
+                        </div>
+                        <div class="control-group">
+                            <label>&nbsp;</label>
+                            <button id="startMapSimulation">📍 Start Map Simulation</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="section">
+                    <h2>Delivery Zones</h2>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-value">Pabna City</div>
+                            <div class="stat-label">Primary Zone</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">15 km</div>
+                            <div class="stat-label">Delivery Radius</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">24/7</div>
+                            <div class="stat-label">Service Window</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">100+</div>
+                            <div class="stat-label">Active SMEs</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>GreenLift AI - Intelligent VTOL Drone Delivery Ecosystem for SMEs</p>
+            <p>Team Phantom | Pabna University of Science and Technology</p>
+            <p>Contact: armanislam527@gmail.com</p>
+        </div>
+    </div>
+
+    <script>
+        // Navigation functionality
+        document.querySelectorAll('.nav-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const targetId = this.getAttribute('data-target');
+                
+                // Update active button
+                document.querySelectorAll('.nav-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                this.classList.add('active');
+                
+                // Show target view
+                document.querySelectorAll('.view').forEach(view => {
+                    view.classList.remove('active');
+                });
+                document.getElementById(targetId).classList.add('active');
+            });
+        });
+
+        // Order functionality
+        document.getElementById('orderButton').addEventListener('click', function() {
+            const product = document.getElementById('product').value;
+            const address = document.getElementById('address').value.trim();
+
+            if (!product || !address) {
+                alert("Please select a product and enter your address!");
+                return;
+            }
+
+            document.getElementById('loading').style.display = 'block';
+            this.disabled = true;
+
+            setTimeout(() => {
+                const orderId = `GL-${Math.floor(Math.random() * 1000).toString().padStart(3, '0')}`;
+                const productText = document.querySelector(`#product option[value="${product}"]`).textContent;
+
+                document.getElementById('confirmProduct').textContent = productText;
+                document.getElementById('confirmAddress').textContent = address;
+                document.getElementById('orderId').textContent = orderId;
+                document.getElementById('confirmation').style.display = 'block';
+                document.getElementById('loading').style.display = 'none';
+                this.disabled = false;
+            }, 1500);
+        });
+
+        // Simulation functionality
+        const startSimBtn = document.getElementById('startSimulation');
+        const resetSimBtn = document.getElementById('resetSimulation');
+        const simStatus = document.getElementById('simulationStatus');
+        const droneAssembly = document.getElementById('droneAssembly');
+        const string = document.getElementById('string');
+        const pkg = document.getElementById('package');
+        const verticalFans = document.querySelectorAll('#verticalFans .fan');
+        const horizontalFan = document.getElementById('horizontalFan');
+        let animationFrameId = null;
+        let isSimulating = false;
+
+        // Fan animation control
+        function toggleFans(state) {
+            verticalFans.forEach(fan => {
+                if (state === 'vertical' || state === 'hover') {
+                    fan.classList.add('spinning');
+                } else {
+                    fan.classList.remove('spinning');
+                }
+            });
+            
+            if (state === 'horizontal') {
+                horizontalFan.classList.add('spinning');
+            } else {
+                horizontalFan.classList.remove('spinning');
+            }
+        }
+
+        // Animation constants
+        const START_X = 130;
+        const START_Y = 385;
+        const CRUISE_Y = 200;
+        const DEST_X = 650;
+        const DROP_Y = 420;
+        const V_TRANSLATE = CRUISE_Y - START_Y;
+        const H_TRANSLATE = DEST_X - START_X;
+        const STRING_ATTACH_Y = 400;
+        const STRING_DROP_LENGTH = DROP_Y - CRUISE_Y - (STRING_ATTACH_Y - START_Y);
+
+        // Simulation functions
+        function startSimulation() {
+            if (isSimulating) return;
+            isSimulating = true;
+            startSimBtn.disabled = true;
+            resetSimBtn.disabled = true;
+
+            const weight = parseFloat(document.getElementById('packageWeight').value);
+            const maxLoad = 5.0;
+            const isOverloaded = weight > maxLoad;
+
+            simStatus.textContent = `Starting simulation with ${weight}kg package...`;
+            toggleFans('vertical');
+
+            // Takeoff animation
+            setTimeout(() => {
+                simStatus.textContent = "Taking off vertically...";
+                animateDrone(2000, (p) => {
+                    droneAssembly.setAttribute('transform', `translate(0, ${p * V_TRANSLATE})`);
+                }).then(() => {
+                    // Transition to horizontal flight
+                    simStatus.textContent = "Transitioning to horizontal flight...";
+                    toggleFans('horizontal');
+                    
+                    return animateDrone(4000, (p) => {
+                        droneAssembly.setAttribute('transform', `translate(${p * H_TRANSLATE}, ${V_TRANSLATE})`);
+                    });
+                }).then(() => {
+                    // Descend to drop point
+                    simStatus.textContent = "Descending to deliver...";
+                    toggleFans('hover');
+                    string.setAttribute('opacity', '1');
+                    pkg.setAttribute('opacity', '1');
+                    
+                    return animateDrone(2000, (p) => {
+                        const currentStringY = STRING_ATTACH_Y + (p * STRING_DROP_LENGTH);
+                        string.setAttribute('y2', currentStringY);
+                        pkg.setAttribute('y', currentStringY);
+                    });
+                }).then(() => {
+                    // Handle delivery outcome
+                    if (isOverloaded) {
+                        simStatus.textContent = "⚠️ Overload detected! Releasing string...";
+                        string.setAttribute('opacity', '0.3');
+                        pkg.setAttribute('opacity', '0.3');
+                    } else {
+                        simStatus.textContent = "✅ Package delivered successfully!";
+                        pkg.setAttribute('opacity', '0');
+                        // Retract string
+                        return animateDrone(1000, (p) => {
+                            const currentStringY = STRING_ATTACH_Y + ((1 - p) * STRING_DROP_LENGTH);
+                            string.setAttribute('y2', currentStringY);
+                        }).then(() => {
+                            string.setAttribute('opacity', '0');
+                        });
+                    }
+                }).then(() => {
+                    // Return to hub
+                    simStatus.textContent = "Returning to hub...";
+                    toggleFans('horizontal');
+                    
+                    return animateDrone(3000, (p) => {
+                        droneAssembly.setAttribute('transform', `translate(${(1 - p) * H_TRANSLATE}, ${V_TRANSLATE})`);
+                    });
+                }).then(() => {
+                    // Land
+                    simStatus.textContent = "Landing...";
+                    toggleFans('vertical');
+                    
+                    return animateDrone(2000, (p) => {
+                        droneAssembly.setAttribute('transform', `translate(0, ${(1 - p) * V_TRANSLATE})`);
+                    });
+                }).then(() => {
+                    simStatus.textContent = "✅ Mission complete!";
+                    isSimulating = false;
+                    startSimBtn.disabled = false;
+                    resetSimBtn.disabled = false;
+                    toggleFans('off');
+                }).catch(() => {
+                    isSimulating = false;
+                    startSimBtn.disabled = false;
+                    resetSimBtn.disabled = false;
+                });
+            });
+        }
+
+        function animateDrone(duration, updateFn) {
+            return new Promise((resolve) => {
+                const startTime = performance.now();
+                
+                function step(currentTime) {
+                    if (!isSimulating) {
+                        resolve();
+                        return;
+                    }
+                    
+                    const elapsed = currentTime - startTime;
+                    const progress = Math.min(elapsed / duration, 1);
+                    
+                    updateFn(progress);
+                    
+                    if (progress < 1) {
+                        animationFrameId = requestAnimationFrame(step);
+                    } else {
+                        resolve();
+                    }
+                }
+                
+                animationFrameId = requestAnimationFrame(step);
+            });
+        }
+
+        function resetSimulation() {
+            if (animationFrameId) {
+                cancelAnimationFrame(animationFrameId);
+            }
+            isSimulating = false;
+            
+            droneAssembly.setAttribute('transform', 'translate(0,0)');
+            string.setAttribute('opacity', '0');
+            string.setAttribute('y2', STRING_ATTACH_Y);
+            pkg.setAttribute('opacity', '0');
+            pkg.setAttribute('y', STRING_ATTACH_Y);
+            toggleFans('off');
+            
+            simStatus.textContent = "Status: Ready to begin simulation";
+            startSimBtn.disabled = false;
+            resetSimBtn.disabled = true;
+        }
+
+        startSimBtn.addEventListener('click', startSimulation);
+        resetSimBtn.addEventListener('click', resetSimulation);
+
+        // Map simulation functionality
+        document.getElementById('startMapSimulation').addEventListener('click', function() {
+            const weight = document.getElementById('mapWeight').value;
+            alert(`Starting map simulation for ${weight}kg delivery! In a real implementation, this would show the drone moving on the map.`);
+        });
+
+        // Initialize
+        resetSimBtn.disabled = true;
+    </script>
+    
+    <style>
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        .fan.spinning {
+            animation: spin 0.4s linear infinite;
+            transform-origin: center;
+            transform-box: fill-box;
+        }
+        #horizontalFan.spinning {
+            animation: spin 0.1s linear infinite;
+            transform-origin: center;
+            transform-box: fill-box;
+        }
+    </style>
+</body>
+</html>
+
