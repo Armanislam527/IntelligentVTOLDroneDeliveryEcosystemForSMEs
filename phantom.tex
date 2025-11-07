@@ -7,13 +7,20 @@
 \usepackage{amsmath}
 \usepackage{fontspec}
 \usepackage{xcolor}
-\usepackage[export]{adjustbox}
+\usepackage{hyperref}
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage{tikz}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.17}
 
-% Custom color theme for GreenLift AI
+% Custom colors
 \definecolor{greendark}{RGB}{15, 71, 50}
 \definecolor{greenlight}{RGB}{41, 184, 126}
 \definecolor{bluedark}{RGB}{23, 63, 117}
+\definecolor{accent}{RGB}{139, 92, 246}
 
+% Set colors
 \setbeamercolor{structure}{fg=greendark}
 \setbeamercolor{title}{fg=greendark}
 \setbeamercolor{frametitle}{fg=bluedark}
@@ -21,255 +28,306 @@
 \setbeamercolor{block body}{fg=black,bg=green!10}
 \setbeamercolor{alerted text}{fg=bluedark}
 
-% Remove navigation symbols to save space
+% Remove navigation symbols
 \setbeamertemplate{navigation symbols}{}
 \setbeamertemplate{footline}[frame number]
 
-% Title and author information
-\title[GreenLift AI]{GreenLift AI:\\Intelligent VTOL Drone Delivery Ecosystem for SMEs}
-\subtitle{Zero-Carbon Logistics with Business Intelligence}
-\author[Team Phantom]{Parvez Ali \and Arman Islam \and Lamia Islam \and MD Basim Al Zabir Shammo}
-\institute[PUST]{Pabna University of Science and Technology\\Department of Information and Communication Engineering}
+% Hyperlink setup
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    urlcolor=blue
+}
+
+% Title and author info
+\title[GreenLift AI]{GreenLift AI: Intelligent VTOL Drone Delivery Ecosystem for SMEs}
+\author[Team Phantom]{Team Phantom}
+\institute[PUST]{Pabna University of Science and Technology}
 \date{\today}
 
-% Department logo on title page - properly sized and positioned
-\titlegraphic{\includegraphics[width=2cm]{pust.png}}
+% Add index to header
+\setbeamertemplate{headline}{
+    \leavevmode%
+    \hbox{%
+        \begin{beamercolorbox}[wd=.5\paperwidth,ht=2.5ex,dp=1ex,center]{section in head/foot}%
+            \insertshorttitle
+        \end{beamercolorbox}%
+        \begin{beamercolorbox}[wd=.5\paperwidth,ht=2.5ex,dp=1ex,center]{subsection in head/foot}%
+            \insertsectionnavigationhorizontal{.5\paperwidth}{\hskip0pt plus1filll}{}%
+        \end{beamercolorbox}%
+    }%
+    \vskip0pt%
+}
 
 \begin{document}
 
-% Title Slide - fixed logo sizing and positioning
+% Slide 1: Title Slide
 \begin{frame}
 \titlepage
 \begin{center}
-\large SOLVIO AI Hackathon 2025 Finalist\\
-\small Presented by Team Phantom
+\small \textbf{Contact:} armanislam527@gmail.com \\
+\small \textbf{Mobile:} +8801521751005 \\
+\small \textbf{Portfolio:} \href{https://armanislam527.github.io/IntelligentVTOLDroneDeliveryEcosystemForSMEs/}{https://armanislam527.github.io/IntelligentVTOLDroneDeliveryEcosystemForSMEs/}
 \end{center}
 \end{frame}
 
-% Table of Contents - now properly organized with fewer sections
-\begin{frame}{Outline}
-\tableofcontents
+% Slide 2: Team Details
+\begin{frame}{Team Details}
+\begin{columns}[T]
+\column{0.25\textwidth}
+\begin{center}
+\includegraphics[width=0.8\textwidth]{parvej.jpg}\\
+\textbf{Parvez Ali}\\
+Team Lead \& Software Engineer\\
+\href{https://linkedin.com/in/urparvezali/}{LinkedIn} | \href{https://github.com/urparvezali}{GitHub}\\
+NID: \href{https://drive.google.com/file/d/1-l_9IcIwtDezjtcX4Vvi7-Eb6KY6KAKZ/view?usp=sharing}{Link}
+\end{center}
+
+\column{0.25\textwidth}
+\begin{center}
+\includegraphics[width=0.8\textwidth]{arman.png}\\
+\textbf{Arman Islam}\\
+Technical \& Idea Supporter\\
+\href{https://linkedin.com/in/armanislam527/}{LinkedIn} | \href{https://github.com/armanislam527/}{GitHub}\\
+NID: \href{https://drive.google.com/file/d/1UPivrNChWuQZWpv9nl9wEx4fzqjF_iKs/view?usp=sharing}{Link}
+\end{center}
+
+\column{0.25\textwidth}
+\begin{center}
+\includegraphics[width=0.8\textwidth]{lamia.jpeg}\\
+\textbf{Lamia Islam}\\
+Marketing \& Presentation Specialist\\
+\href{https://linkedin.com/in/lamia-islam-087943232/}{LinkedIn} | \href{https://github.com/Lamia-Islam}{GitHub}\\
+NID: \href{https://drive.google.com/file/d/1pd1wLdGmJBCPJ-8oP5kcBBXMjJCaa_VW/view?usp=drivesdk}{Link}
+\end{center}
+
+\column{0.25\textwidth}
+\begin{center}
+\includegraphics[width=0.8\textwidth]{shammo.jpeg}\\
+\textbf{Basim Al Zabir Shammo}\\
+AI \& Research Specialist\\
+\href{https://linkedin.com/in/md-basim-al-zabir-shammo-759082205/}{LinkedIn} | \href{https://github.com/alzabir08}{GitHub}\\
+\href{https://scholar.google.com/citations?user=FGLF-0sAAAAJ&hl=en}{Google Scholar} | \href{https://www.researchgate.net/profile/Basim-Al-Zabir-Shammo}{ResearchGate}\\
+NID: \href{https://drive.google.com/file/d/1fxlvDCYIRBJrwLVuzwj6DPjRqXCDMa24/view?usp=sharing}{Link}
+\end{center}
+\end{columns}
 \end{frame}
 
-% Section 1: Introduction
-\section{Introduction}
-
-\begin{frame}{The Challenge for Bangladesh's SMEs}
-\begin{block}{Critical Industry Challenges}
-\item \textbf{Inefficient Logistics:} 89\% of SMEs struggle with costly last-mile delivery
-\item \textbf{Unreliable in Bad Weather:} 91\% report delayed deliveries during monsoon season
-\item \textbf{High Operational Costs:} Delivery costs consume 18-25\% of operational budgets
-\item \textbf{Limited Business Intelligence:} 73\% lack real-time analytics for inventory and forecasting
-\item \textbf{Environmental Impact:} Traditional delivery systems contribute to carbon emissions
+% Slide 3: Problem Statement
+\begin{frame}{Problem Statement}
+\begin{block}{Critical Challenges for Bangladesh SMEs}
+\item \textbf{Inefficient Logistics}: 89\% of SMEs struggle with costly last-mile delivery
+\item \textbf{Weather Vulnerability}: 91\% report delayed deliveries during monsoon season
+\item \textbf{High Operational Costs}: Delivery costs consume 18-25\% of operational budgets
+\item \textbf{Limited Business Intelligence}: 73\% lack real-time analytics for inventory and forecasting
+\item \textbf{Environmental Impact}: Traditional delivery systems contribute significantly to carbon emissions
 \end{block}
+
+\begin{center}
+\includegraphics[width=0.10\textwidth]{VTOL.png}
+\end{center}
 \end{frame}
 
-% Section 2: Vision & Mission
-\section{Vision \& Mission}
-
-\begin{frame}{Vision \& Mission}
+% Slide 4: Market Opportunity
+\begin{frame}{Market Opportunity}
 \begin{columns}[T]
 \column{0.5\textwidth}
-\begin{block}{\textcolor{greenlight}{Vision}}
-To build a scalable, green logistics network that transforms last-mile delivery and business intelligence for millions of SMEs across South Asia.
+\begin{block}{Market Size \& Target}
+\item 10.4 million SMEs in Bangladesh
+\item 78\% operate in areas with poor logistics infrastructure
+\item Growing e-commerce sector requiring efficient logistics
+\item Average delivery cost: 22\% of product price
 \end{block}
 
 \column{0.5\textwidth}
-\begin{block}{\textcolor{white}{Mission}}
-Empower SMEs in Bangladesh with an eco-friendly, AI-driven drone delivery ecosystem that enhances operational efficiency, sustainability, and data-driven decision-making.
+\begin{block}{Market Trends}
+\item Rapid digital transformation in Bangladesh
+\item Government push for digital economy
+\item Climate change requiring sustainable solutions
+\item Increasing demand for reliable delivery services
 \end{block}
 \end{columns}
 
-\vspace{0.5cm}
-\begin{block}{Core Values}
-\item Zero carbon emissions through solar-powered drones
-\item One-time setup cost without recurring wages
-\item First sustainable delivery ecosystem for Bangladesh
-\end{block}
+\begin{center}
+\includegraphics[width=0.8\textwidth]{pust.png}
+\end{center}
 \end{frame}
 
-% Section 3: Solution
-\section{Solution}
-
-\begin{frame}{GreenLift AI: The Integrated Solution}
-\begin{block}{A Revolutionary Approach}
+% Slide 5: The Solution
+\begin{frame}{The Solution}
+\begin{block}{GreenLift AI Platform}
 GreenLift AI is an integrated, eco-friendly drone delivery and AI-powered business intelligence platform designed specifically for SMEs in Bangladesh.
 \end{block}
 
 \begin{columns}[T]
-\column{0.55\textwidth}
-\item \textbf{Solar-Powered VTOL Drones:} Vertical take-off and landing with solar energy harvesting
-\item \textbf{AI Dashboard:} Real-time business insights for inventory, sales, and customer analytics
-\item \textbf{Zero-Carbon Logistics:} Eliminates carbon footprint while reducing delivery costs
-\item \textbf{Complete Solution:} One-time setup cost without recurring wages or salary
-\item \textbf{Smart Tension System:} Automatic package release if weight exceeds safe limits
+\column{0.5\textwidth}
+\item Solar-powered VTOL drones with 5kg payload capacity
+\item AI dashboard for business analytics and demand forecasting
+\item Zero-carbon delivery system
+\item One-time setup cost without recurring wages
+\item Smart tension sensors for safe package handling
 
-\column{0.45\textwidth}
-\centering
-\includegraphics[width=0.9\textwidth, height=4cm, keepaspectratio]{VTOL.png}
+\column{0.5\textwidth}
+\begin{center}
+\includegraphics[width=0.10\textwidth]{drone_by_gemini.png}
+\end{center}
 \end{columns}
 \end{frame}
 
-% Section 4: Technology
-\section{Technology}
+% Slide 6: AI Integration
+\begin{frame}{AI Integration}
+\begin{block}{Role of AI in Our Solution}
+\item \textbf{Predictive Analytics}: Demand forecasting and inventory management
+\item \textbf{Route Optimization}: AI-driven path planning considering weather conditions
+\item \textbf{Automated Decision-Making}: Smart scheduling and resource allocation
+\item \textbf{Customer Insights}: Behavioral analysis for targeted marketing
+\item \textbf{Predictive Maintenance}: Drone health monitoring and maintenance scheduling
+\end{block}
 
-\begin{frame}{Technology Architecture}
-\centering
-\includegraphics[width=0.7\textwidth, height=4cm, keepaspectratio]{drone_by_gemini.png}
-
-\begin{block}{System Components}
-\item \textbf{VTOL Drone:} Solar power + battery backup, vertical-to-horizontal flight transition
-\item \textbf{Smart Tension Sensor:} Automatic package release if weight exceeds 5kg limit
-\item \textbf{AI Dashboard:} Real-time business analytics and delivery tracking
-\item \textbf{Modular Micro-Hubs:} Solar-powered charging stations for drone fleet
+\begin{block}{Benefits of AI Integration}
+AI enhances user experience by providing real-time business insights, optimizing delivery routes, and enabling predictive maintenance, resulting in 40-60\% cost reduction and 85\% faster delivery times.
 \end{block}
 \end{frame}
 
-% Section 5: Benefits
-\section{Benefits \& Impact}
+% Slide 7: Product Demo / Screenshots
+\begin{frame}{Product Demo / Screenshots}
+\begin{center}
+\includegraphics[width=0.10\textwidth]{VTOL.png}
+\end{center}
 
-\begin{frame}{Tangible Benefits for SMEs}
+\begin{block}{Key Features Demonstrated}
+\item Real-time drone tracking and monitoring
+\item Interactive delivery dashboard for SMEs
+\item Automated scheduling and route optimization
+\item Business analytics and reporting tools
+\end{block}
+\end{frame}
+
+% Slide 8: Unique Value Proposition
+\begin{frame}{Unique Value Proposition}
 \begin{columns}[T]
-\column{0.6\textwidth}
-\begin{block}{Operational Advantages}
-\item \textbf{Cost Reduction:} 40-60\% lower delivery costs
-\item \textbf{Speed:} 85\% faster delivery even in bad weather
-\item \textbf{Sustainability:} 100\% zero-carbon emissions
-\item \textbf{Reliability:} 99.2\% on-time delivery rate
+\column{0.5\textwidth}
+\begin{block}{What Makes Us Unique}
+\item \textbf{Zero Carbon Emissions}: 100\% solar-powered fleet
+\item \textbf{One-Time Setup Cost}: No recurring labor expenses
+\item \textbf{AI-Powered Analytics}: Real-time business insights
+\item \textbf{Weather Resilience}: Operates in monsoon conditions
 \end{block}
 
-\begin{block}{Environmental Impact}
-\item 0.85kg CO\textsubscript{2} saved per delivery
-\item 4.2 tons CO\textsubscript{2} reduction annually per micro-hub
-\item No noise pollution in residential areas
+\column{0.5\textwidth}
+\begin{block}{AI Differentiation}
+Our AI integration provides:
+\item Predictive demand analytics
+\item Optimized delivery routes
+\item Automated inventory management
+\item Personalized customer experiences
 \end{block}
-
-\column{0.4\textwidth}
-\centering
-\includegraphics[width=0.8\textwidth, height=3cm, keepaspectratio]{pust.png}
 \end{columns}
+
+\begin{center}
+\includegraphics[width=0.3\textwidth]{VTOL.png}
+\end{center}
 \end{frame}
 
-% Section 6: Competitive Advantage
-\section{Competitive Advantage}
-
-\begin{frame}{GreenLift AI vs. Traditional Delivery Systems}
-\begin{table}
-\resizebox{\textwidth}{!}{
-\begin{tabular}{lcccc}
-\toprule
-\textbf{Feature} & \textbf{GreenLift AI} & \textbf{Traditional} & \textbf{Ride-sharing} \\
-\midrule
-Carbon Footprint & \textcolor{greenlight}{Zero} & High & Medium \\
-Delivery Cost (BDT) & \textcolor{greenlight}{15-25} & 50-75 & 35-60 \\
-Weather Resilience & \textcolor{greenlight}{High} & Low & Medium \\
-Business Analytics & \textcolor{greenlight}{Included} & Not available & Limited \\
-Wage Dependency & \textcolor{greenlight}{None} & High & Medium \\
-\bottomrule
-\end{tabular}
-}
-\end{table}
-
-\begin{block}{Key Differentiator}
-Only solution combining zero-carbon delivery with AI-powered business intelligence
-\end{block}
-\end{frame}
-
-% Section 7: Business Model
-\section{Business Model}
-
-\begin{frame}{Sustainable Growth Strategy}
-\begin{columns}[T]
-\column{0.6\textwidth}
+% Slide 9: Business Model / Revenue Strategy
+\begin{frame}{Business Model / Revenue Strategy}
 \begin{block}{Revenue Streams}
-\item \textbf{Pay-per-delivery model} (15-30 BDT per delivery)
-\item \textbf{Subscription plans} for business intelligence dashboard
-\item \textbf{Fleet leasing} for larger SMEs
+\item \textbf{Pay-per-Delivery}: 15-30 BDT per delivery
+\item \textbf{Subscription Plans}: Business intelligence dashboard (500-2000 BDT/month)
+\item \textbf{Fleet Leasing}: For larger SMEs (50,000 BDT/month)
+\item \textbf{Premium Services}: Advanced analytics and custom integrations
 \end{block}
 
-\begin{block}{Scalability Plan}
-\item \textbf{Phase 1 (6 months):} Pabna district pilot
-\item \textbf{Phase 2 (12 months):} Northern Bangladesh expansion
-\item \textbf{Phase 3 (24 months):} Nationwide coverage
+\begin{block}{Pricing Strategy}
+\item Competitive pricing vs traditional delivery
+\item Tiered subscription models for different SME sizes
+\item Volume discounts for high-volume users
 \end{block}
-
-\column{0.4\textwidth}
-\centering
-\includegraphics[width=0.8\textwidth, height=3cm, keepaspectratio]{VTOL.png}
-\end{columns}
 \end{frame}
 
-% Section 8: Team - fixed photo sizing
-\section{Team}
-
-\begin{frame}{Meet Team Phantom}
+% Slide 10: Go-to-Market Strategy
+\begin{frame}{Go-to-Market Strategy}
 \begin{columns}[T]
-\column{0.25\textwidth}
-\centering
-\includegraphics[width=0.8\textwidth, height=2.5cm, keepaspectratio]{parvej.jpg}\\
-\textbf{Parvez Ali}\\
-Team Lead
+\column{0.5\textwidth}
+\begin{block}{Customer Acquisition}
+\item Pilot program with 5 SME partners in Pabna district
+\item Partnership with local business associations
+\item Digital marketing targeting SMEs
+\item Referral programs for existing customers
+\end{block}
 
-\column{0.25\textwidth}
-\centering
-\includegraphics[width=0.8\textwidth, height=2.5cm, keepaspectratio]{arman.png}\\
-\textbf{Arman Islam}\\
-Technical
-
-\column{0.25\textwidth}
-\centering
-\includegraphics[width=0.8\textwidth, height=2.5cm, keepaspectratio]{lamia.jpeg}\\
-\textbf{Lamia Islam}\\
-Marketing
-
-\column{0.25\textwidth}
-\centering
-\includegraphics[width=0.8\textwidth, height=2.5cm, keepaspectratio]{shammo.jpeg}\\
-\textbf{MD Basim Al Zabir Shammo}\\
-AI Specialist
+\column{0.5\textwidth}
+\begin{block}{Distribution Plan}
+\item Direct sales team for enterprise clients
+\item Online platform for self-service onboarding
+\item Partnership with e-commerce platforms
+\item Government collaboration for rural areas
+\end{block}
 \end{columns}
 
-\vspace{0.5cm}
-\begin{center}
-\begin{block}{Contact}
-armanislam527@gmail.com
+\begin{block}{Marketing Channels}
+Social media, trade shows, industry events, and content marketing focusing on sustainability and efficiency benefits.
 \end{block}
+\end{frame}
+
+% Slide 11: Financial Projections
+\begin{frame}{Financial Projections}
+\begin{block}{Revenue Projections (Next 3 Years)}
+\item \textbf{Year 1}: 5 million BDT (Pilot phase, 100 SMEs)
+\item \textbf{Year 2}: 25 million BDT (Regional expansion, 500 SMEs)
+\item \textbf{Year 3}: 75 million BDT (National presence, 1500 SMEs)
+\end{block}
+
+\begin{block}{Investment Target}
+Seeking 10 million BDT investment to reach revenue generation phase, covering:
+\item Prototype development and testing
+\item Regulatory approval processes
+\item Initial fleet deployment
+\item Marketing and customer acquisition
+\end{block}
+
+\begin{center}
+\begin{tikzpicture}[scale=0.10]
+\begin{axis}[
+    axis lines=left,
+    xlabel={Year},
+    ylabel={Revenue (Million BDT)},
+    ymin=0, ymax=80,
+    xmin=0, xmax=4,
+    xtick={1,2,3},
+    ybar,
+    bar width=0.5,
+    nodes near coords,
+    nodes near coords align={vertical},
+]
+\addplot coordinates {(1,5) (2,25) (3,75)};
+\end{axis}
+\end{tikzpicture}
 \end{center}
 \end{frame}
 
-% Section 9: Next Steps
-\section{Next Steps}
-
-\begin{frame}{Our Journey Forward}
-\begin{block}{Roadmap}
-\item \textbf{Complete prototype development} (2 months)
-\item \textbf{Field testing} with 5 SME partners in Pabna (3 months)
-\item \textbf{Regulatory approval} from Bangladesh Civil Aviation Authority (4 months)
-\item \textbf{Partnership} with solar technology provider (2 months)
-\item \textbf{Pilot program} with selected SMEs across Pabna district
+% Slide 12: Next Steps & Ask
+\begin{frame}{Next Steps \& Ask}
+\begin{block}{Our Journey Forward}
+\item Complete prototype development (2 months)
+\item Field testing with 5 SME partners in Pabna (3 months)
+\item Regulatory approval from Bangladesh Civil Aviation Authority (4 months)
+\item Partnership with solar technology provider (2 months)
+\item Pilot program with selected SMEs across Pabna district
 \end{block}
 
-\vspace{0.5cm}
-\begin{center}
-\large \textbf{For partnership and investment opportunities:}\\
-armanislam527@gmail.com
-\end{center}
-\end{frame}
+\begin{block}{Our Ask}
+Seeking 10 million BDT investment to accelerate development and market entry, focusing on:
+\item Technology development and AI integration
+\item Regulatory compliance and safety certification
+\item Initial fleet manufacturing and deployment
+\end{block}
 
-% Closing Slide
-\begin{frame}
-\centering
-\includegraphics[width=0.3\textwidth]{pust.png}\\
-\vspace{0.5em}
-\Large\textbf{GreenLift AI}\\
-\large Intelligent VTOL Drone Delivery Ecosystem for SMEs\\
-\vspace{0.5em}
-\large Team Phantom\\
-Pabna University of Science and Technology\\
-\vspace{0.5em}
-\large SOLVIO AI Hackathon 2025 Finalist\\
-\vspace{0.5em}
-\large Thank You\\
+\begin{center}
+\textbf{Contact:} armanislam527@gmail.com \\
+\textbf{Mobile:} +8801521751005 \\
+\textbf{Portfolio:} \href{https://armanislam527.github.io/IntelligentVTOLDroneDeliveryEcosystemForSMEs/}{https://armanislam527.github.io/IntelligentVTOLDroneDeliveryEcosystemForSMEs/}
+\end{center}
 \end{frame}
 
 \end{document}

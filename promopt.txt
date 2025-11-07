@@ -74,3 +74,18 @@ https://scholar.google.com/citations?user=FGLF-0sAAAAJ&hl=en
 
 
 please remember all info about all member.now i will provide you a list of files then your task is to arrange them in a single index.html for the portfolio of the webpage.like team details section will one category,simulation button in one side that will redirect to server_simulation.htm from the index page for simulation.a section will hold the preliminary idea on pdf preview and a button will be there for download it.a section will there for viewing or downloading my presentation slide they paybe in pdf or pptx and it also need to be downloadable.every team member info will be shonw shorty in the front index page and when they are hovered or clicked then there will be showed their details info and one side you can show also the diagram or images of the vtol drone also .you can use the VTOL.png and/or drone_by_gemini.png for visual conceptualization.the presentation name will be phantom.pdf/pptx. all name are pointing their corresponding files. use versity and dept logo at the page. some html in there are experimental.now i want to make a best indes.html page desing for covering all the requirements. the site will be live in  "https://armanislam527.github.io/IntelligentVTOLDroneDeliveryEcosystemForSMEs/ " all the local file will be uploaded/pushed into  this git repo and the site will be live frome there.please help me to desing a overall purpose index.html page for the requirements.  now my project directory is given >>
+
+
+https://github.com/urparvezali
+https://drive.google.com/file/d/1-l_9IcIwtDezjtcX4Vvi7-Eb6KY6KAKZ/view?usp=sharing
+
+
+https://github.com/armanislam527/
+https://drive.google.com/file/d/1UPivrNChWuQZWpv9nl9wEx4fzqjF_iKs/view?usp=sharing
+
+https://github.com/Lamia-Islam
+https://drive.google.com/file/d/1pd1wLdGmJBCPJ-8oP5kcBBXMjJCaa_VW/view?usp=drivesdk
+
+
+github.com/alzabir08
+https://drive.google.com/file/d/1fxlvDCYIRBJrwLVuzwj6DPjRqXCDMa24/view?usp=sharing
