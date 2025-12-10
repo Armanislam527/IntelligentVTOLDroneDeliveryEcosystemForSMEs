@@ -95,8 +95,95 @@ can you add a business canvas model on the last of the slide.and also show the i
 
 
 
-
+easy to explain 
 runing ke ki kortece
 tader lakins gula ki ki
 ami kno unique
 is it patentable?
+easily understandable
+simple 
+as small text as possible
+obvious
+not to be:{
+    illegible
+    complicated
+    subtle
+    gergon
+    too much text
+    excessive explanation and caveats
+    excessive branding per slide
+    photos with no titles or captions
+    animations
+    transitions
+    memes
+    subtle humor
+    accidental humor
+}
+large bold simple font with good contrast
+helvetica,bold, 48
+georgia,regular, 48
+what others recommended{
+    company purpose
+    pboblem
+    solution
+    market size
+    product
+    business model:fremium,b2b,
+    competition
+    team
+    financials
+    milestones
+    why now
+    titles
+    traction
+    differeniation
+    value proposition
+    underlying magic
+    go to market
+    use of $
+}
+customer acquisition{
+    channels
+    initial set
+}
+sales channels
+relevence experience
+why should product existing
+what is the opporuniity
+why is now the righ tiime for our business to succeed
+macro trends(new technologies,laws) that give us a chance to succeed where others have failed
+description{
+    differeniation
+}
+market size{
+    proof point
+}
+competition
+market share
+existing product: why they failed
+traction to date{
+    current state
+    plan for getting initial user/customer
+    roadmap
+}
+revenue flow
+cost structure
+funding to date
+use of funds
+financial projections
+key metrics
+milestones
+team{
+    relevant experience
+    roles
+    advisors
+}
+summerize{
+    secrete sauce
+    is patentable
+    tech stack
+    measurable impact
+    is it scalable
+}
+contact info
+company tagline
