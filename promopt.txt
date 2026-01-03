@@ -124,7 +124,7 @@ helvetica,bold, 48
 georgia,regular, 48
 what others recommended{
     company purpose
-    pboblem
+    problem
     solution
     market size
     product
@@ -159,6 +159,7 @@ market size{
     proof point
 }
 competition
+competitive adcvantage
 market share
 existing product: why they failed
 traction to date{
@@ -187,3 +188,172 @@ summerize{
 }
 contact info
 company tagline
+
+
+
+
+1: Intro
+Good morning everyone.
+We are Team Phantom from Pabna University of Science and Technology.
+Today, we present GreenLift AI — an intelligent, solar-powered VTOL drone delivery system designed specifically for small and medium enterprises.
+
+
+2: Team Phantom
+“Our team combines software engineering, AI research, hardware systems, and business presentation skills.
+We focus on building practical technology — not just slides — that can work in the real world.”
+At this stage, I do not have a formal business partner.
+Partnership decisions carry long-term risk and responsibility.
+I chose not to rush this process.
+I am currently validating the technology, market, and execution first.
+The right partner must add real value, not just a title.
+I am open to partnerships once alignment, trust, and clear roles are established.
+
+3: The Logistics Barrier​
+“Small businesses face serious delivery problems.
+Road traffic is slow.
+Monsoon floods delay transport.
+Hiring delivery staff is expensive.
+Most SMEs also lack real-time business data.
+These problems limit growth.”
+
+
+4: Market Opportunity
+“Bangladesh has millions of SMEs.
+Most operate in areas with poor logistics.
+Delivery cost can reach up to 25 percent of product price.
+This is a massive opportunity for a smarter system.”
+this is a statistics of our market opportuniti.
+“Even capturing a small percentage of SMEs creates a sustainable business.
+The market is large, fragmented, and underserved.”
+
+5: GreenLift AI: The Integrated Solution​
+“GreenLift AI combines two systems into one platform.
+First, a solar-powered VTOL delivery drone.
+Second, an AI-powered business dashboard.
+This removes logistics pain and adds intelligence for SMEs.”
+“Our advantage comes from system integration.
+Drone hardware.
+AI software.
+Solar energy.
+Local deployment.
+Together, this is hard to copy.”
+
+“Users see real-time drone tracking, delivery status, and business analytics.
+Everything is simple and localized.
+This is built for SME owners, not engineers.”
+u can see the full simulation on the project portfoliio by scanning the qr code mentioned in the last page
+
+
+6: Technical Deep Dive​
+“Here is why GreenLift AI is unique.
+Ready-made quadcopter drones cannot fly long distances.
+They consume high power and have limited range.
+Pure solar drones cannot generate enough power for quadcopter-style lifting.
+And horizontal fixed-wing drones cannot stop mid-air for safe delivery.
+We combine VTOL and fixed-wing flight.
+This gives low power consumption, high payload, and safe hovering delivery.
+A backup battery is always available.
+This ensures safe return in emergencies.
+No existing system combines all three.”
+“Our hybrid delivery mechanism, AI-driven logistics flow, and safety release system are patentable.”
+“And also scaling is simple.
+Add drones.
+Add hubs.
+Same software.
+Same model.”
+
+7: Weight Lift Mechanism​
+“To ensure safety, our drone uses a tension-release mechanism inspired by bicycle freewheel systems.
+When the load exceeds a preset threshold, the string automatically disengages.
+This prevents anyone from pulling the drone down.
+A spring-based threshold controls the release point.
+A second layer rewinds the string after safe delivery.
+If needed, gradual lifting methods like parachute or disc-based load control can be used for smoother weight handling.”
+
+8: Unique Value Proposition​
+“GreenLift AI uniquely combines efficiency and sustainability.
+Zero-carbon solar operation boosts brand value.
+Autonomous delivery removes wage dependency.
+AI optimizes routes, weather planning, and demand forecasting.
+Advanced sensing enables reliable operation even in harsh conditions.”
+
+9: Business Model: Predictable Revenue, Scalable Growth​
+“Our revenue comes from pay-per-delivery fees, monthly AI subscriptions, and fleet leasing.
+SMEs pay only for what they use.
+No large upfront cost.”
+
+
+10: AI Integration: Transforming Data into Profit​
+“Our AI forecasts demand, optimizes routes, monitors drone health, and provides customer insights.
+SMEs get decisions, not raw data.
+No data analyst is needed.”
+
+11: Initial estimated cost breakdown
+“Funds are allocated to R&D, fleet acquisition, micro-hubs, software, and legal approval.
+This ensures efficient market entry.”
+
+
+12:Financial Projections​
+“In year one, revenue is zero.
+This is for setup, piloting, and regulatory approval.
+Year two targets 10 million BDT.
+Year three targets 100 million BDT through scale.”
+
+
+13: Go-to-Market Strategy: Phased Rollout​
+“We start with a pilot in Pabna.
+Partner with local SMEs.
+Prove reliability.
+Then expand district by district.”
+
+
+14: Competitive Moat: Data-Driven Advantage​
+Why others failed
+Voice-over:
+“Traditional delivery depends on roads and manpower.
+Foreign drone startups ignore local constraints.
+They are expensive and impractical for SMEs.”
+Why Now
+because Timing matters
+“Solar technology is affordable.
+AI tools are mature.
+Drone regulations are evolving.
+SMEs are ready for automation.
+This moment did not exist before.”
+
+
+15: Next Steps: Accelerating to Market Leadership​
+“We are seeking 10 million BDT.
+This funds drone manufacturing, software development, regulatory compliance, and pilot deployment.
+Our goal is full pilot launch by 2026.”
+“We have simulations, system architecture, and pilot plans ready.
+The next step is real-world testing.”
+
+
+
+16: Business Model Canvas​
+“GreenLift AI delivers where roads fail.
+Uses solar power.
+Provides business intelligence.
+Is scalable.
+And is built for SMEs.”
+
+
+17: Thank You​
+“Thank you.GreenLift AI.
+Deliver smarter.
+Grow cleaner.
+We are ready to answer your questions.If u have ani queri then feel free to reach out to us ”
+
+
+
+
+
+
+
+
+
+
+Good morning, everyone. We are Team Phantom from Pabna University of Science and Technology. Today, we present GreenLift AI — an intelligent, solar-powered VTOL drone-delivery system designed specifically for small and medium enterprises. Our team combines software engineering, AI research, hardware systems, and business presentation skills. We focus on building practical technology — not just slides — that can work in the real world. Small businesses face serious delivery problems. Road traffic is slow. Monsoon floods delay transport. Hiring delivery staff is expensive. Most SMEs also lack real-time business data. These problems limit growth. Bangladesh has millions of SMEs. Most operate in areas with poor logistics. Delivery cost can reach up to 25 percent of the product price. This is a massive opportunity for a smarter system. This is a statistic of our market opportunity. Even capturing a small percentage of SMEs creates a sustainable business. The market is large, fragmented, and underserved. GreenLift AI combines two systems into one platform. First, a solar-powered VTOL delivery drone. Second, an AI-powered business dashboard. This removes logistics pain and adds intelligence for SMEs. Our advantage comes from system integration. Drone hardware. AI software. Solar energy. Local deployment. Together, this is hard to copy. Users see real-time drone tracking, delivery status, and business analytics. Everything is simple and localized. This is built for SME owners, not engineers. You can see the full simulation on the project portfolio by scanning the QR code mentioned on the last page. Here is why GreenLift AI is unique. Ready-made quadcopter drones are not designed to fly long distances. They consume a high amount of power and have a limited range. Pure solar drones cannot generate enough power for quadcopter-style lifting, and horizontal fixed-wing drones cannot stop mid-air for safe delivery. We combine VTOL and fixed-wing flight. This gives low power consumption, high payload, and safe hovering delivery. A backup battery is always available. This ensures a safe return in emergencies. No existing system combines all three. Our hybrid delivery mechanism, AI-driven logistics flow, and safety release system are patentable. Also, scaling is simple: Add drones, Add hubs, Same software, Same model.  To ensure safety, our drone uses a tension-release mechanism inspired by bicycle freewheel systems. When the load exceeds a preset threshold, the string automatically disengages. This prevents anyone from pulling the drone down. A spring-based threshold controls the release point. A second layer rewinds the string after safe delivery. If needed, gradual lifting methods like parachute or disc-based load control can be used for smoother weight handling. GreenLift AI uniquely combines efficiency and sustainability. Zero-carbon solar operation boosts brand value. Autonomous delivery removes wage dependency. AI optimizes routes, weather planning, and demand forecasting. Advanced sensing enables reliable operation even in harsh conditions. Our revenue comes from pay-per-delivery fees, monthly AI subscriptions, and fleet leasing. SMEs pay only for what they use. No high upfront cost. Our AI forecasts demand, optimizes routes, monitors drone health and provides customer insights. SMEs get decisions, not raw data. No data analyst is needed. Funds are allocated to R&D, fleet acquisition, micro-hubs, software, and legal approval. This ensures efficient market entry. In year one, revenue is zero. This is for setup, piloting, and regulatory approval. Year two targets 10 million BDT. Year three targets 100 million BDT through scale. We start with a pilot in Pabna. Partner with local SMEs. Prove reliability. Then expand district by district. Why others failed Traditional delivery depends on roads and manpower. Foreign drone startups ignore local constraints. They are expensive and impractical for SMEs. Why Now because Timing matters Solar technology is affordable. AI tools are mature. Drone regulations are evolving. SMEs are ready for automation. This moment did not exist before. We are seeking 10 million BDT. These funds drone manufacturing, software development, regulatory compliance, and pilot deployment. Our goal is full pilot launch by 2026. We have simulations, system architecture, and pilot plans ready. The next step is the real-world testing. GreenLift AI delivers where roads fail. Uses solar power. Provides business intelligence. Is scalable. And is built for SMEs. Thank you. GreenLift AI. Deliver smarter. Grow cleaner. We are ready to answer your questions. If you have any query, then feel free to reach out to us.
+
+
